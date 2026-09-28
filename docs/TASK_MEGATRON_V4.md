@@ -298,3 +298,37 @@ mutant survives, and the operator smoke prints 60 lines starting `torvalds`.
 Cards written/failed/skipped, attempts per card, wall time per generation,
 provider bill, final test count, mutant kill table, `cli.py` numstat,
 `git log --oneline` of the run branch.
+
+## 11. Actual
+
+Run `20260928-135849-f40fb5c6`, processor `glm` (z-ai/glm-5.3-flash, sync),
+2026-09-28 13:58:48 → 14:02:15 (3 min 27 s), branch
+`morph/20260928-135849-f40fb5c6`, `--root` absolute (commits made by mrph).
+Archive: `.morph/runs/20260928-135849-f40fb5c6/`.
+
+| quantity | prediction | actual |
+|---|---|---|
+| cards | 3 | 3 written, 0 failed, 0 skipped |
+| generations | 2 | 2 (search → cli-discover, discover-judge) |
+| provider bill | < $0.03 | **$0.00826** (3 requests, 31,855 in / 9,887 out tokens) |
+| cards with regeneration | ≤ 1 | **0** — every card at attempt 1 |
+| mutants surviving | 0 of 5 | **0 of 5** (M1: test_search, judge; M2: test_cli_discover, judge; M3: judge) |
+| `cli.py` envelope | ≤ +60 / −5 | **+23 / −1** (the `main` docstring line) |
+| tests at the end | 80 | **80** (12 + 5 + 3 new) |
+
+Per card: search +111 (`search.py`) +267 (`test_search.py`); cli-discover
++23/−1 (`cli.py`) +143 (`test_cli_discover.py`); discover-judge +153. No
+other file under `megatron/`, no fixture and no existing test touched.
+
+Operator smoke, 2026-09-28 ~14:03, anonymous, live API:
+`python -m megatron discover "followers:>5000" --pages 2` → exit 0, 60 lines
+starting `torvalds`, seam `geohot`/`mattpocock`, stderr
+`discovered 60 of 1230, pages 2`; the 60 logins equal the fixtures' L1 + L2
+in order, 0 duplicates.
+
+**Falsifiable claim — held:** 3/3 written at attempt 1, 0 of 5 mutants
+survive, the smoke prints 60 lines starting `torvalds`.
+
+Not accepted by anything here: retry/backoff and the search secondary limit
+(§7, no refusal artifact); the `discover | xargs harvest` composition live
+(anonymous core limit, §7).
