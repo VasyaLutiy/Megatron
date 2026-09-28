@@ -1,0 +1,254 @@
+version: 1
+System:
+  name: megatron
+  description: >
+    PaukMegatron v1.0 — GitHub Expert Data Harvester. Collects GitHub user
+    profiles and repository data, computes an expertise score, and stores
+    ranked expert records in a local SQLite database. v1 is the offline core:
+    parsing, async collection with an injected fetcher, scoring, storage.
+  groups:
+    - name: api_manager
+      description: Rate-limit awareness for GitHub REST API v3 responses.
+      functions:
+        - name: Parse Rate Limit
+          description: >
+            parse_rate_limit(headers) reads GitHub X-RateLimit-* response
+            headers (case-insensitive) into a Rate Limit State;
+            seconds_to_wait(state, now) says how long a collector must sleep.
+          behavior: >
+            parse_rate_limit returns a Rate Limit State dict when the three
+            headers X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
+            are present (any case), and None when any of them is missing.
+            seconds_to_wait returns 0 when state is None or remaining > 0,
+            otherwise max(0, reset - now).
+          requirements: [Stdlib Only]
+          guardrails: [Tolerant Parser]
+          steps:
+            - produces: Rate Limit State
+          examples:
+            - given: >
+                the real headers of tests/fixtures/rate_limit_headers.txt
+                as a dict: x-ratelimit-limit "60", x-ratelimit-remaining "59",
+                x-ratelimit-reset "1790594886"
+              when: parse_rate_limit is called
+              then: 'the state is {"limit": 60, "remaining": 59, "reset": 1790594886}'
+            - given: 'a state {"limit": 60, "remaining": 59, "reset": 1790594886}'
+              when: seconds_to_wait(state, now=1790594000)
+              then: the result is 0
+            - given: 'a state {"limit": 60, "remaining": 0, "reset": 1790594886}'
+              when: seconds_to_wait(state, now=1790594766)
+              then: the result is 120
+            - given: a headers dict with no X-RateLimit-* keys at all
+              when: parse_rate_limit is called and seconds_to_wait(None, now=1)
+              then: parse_rate_limit returns None and seconds_to_wait returns 0
+              ref: Tolerant Parser
+    - name: collectors
+      description: Parsers for GitHub API JSON and the async profile collector.
+      functions:
+        - name: Parse Profile Data
+          description: >
+            parse_user_profile(data) turns a GitHub /users/<login> JSON dict
+            into an Expert Profile; parse_repo_stats(login, repos) turns a
+            /users/<login>/repos JSON list into Repo Stats.
+          behavior: >
+            parse_user_profile copies the Expert Profile keys from the raw
+            dict; a missing optional key (name, company, location, created_at)
+            becomes None, missing counters become 0. parse_repo_stats counts
+            all repos in repo_count; forks are excluded from non_fork_count,
+            total_stars and languages; a null language is skipped.
+          requirements: [Stdlib Only, Real Fixtures]
+          guardrails: [Tolerant Parser]
+          steps:
+            - reads: GitHub User JSON
+            - reads: GitHub Repos JSON
+            - produces: Expert Profile
+            - produces: Repo Stats
+          examples:
+            - given: the real file tests/fixtures/user_torvalds.json
+              when: parse_user_profile is called on its parsed JSON
+              then: >
+                login is "torvalds", id is 1024025, followers is 325466,
+                public_repos is 12, name is "Linus Torvalds"
+            - given: 'a minimal dict {"login": "x", "id": 1}'
+              when: parse_user_profile is called
+              then: >
+                followers is 0, public_repos is 0, name is None, company is
+                None, location is None, created_at is None
+              ref: Tolerant Parser
+            - given: the real file tests/fixtures/repos_torvalds.json (12 repos)
+              when: parse_repo_stats("torvalds", repos) is called
+              then: >
+                repo_count is 12, non_fork_count is 9, total_stars is 262418,
+                languages is {"C": 8, "OpenSCAD": 1}
+        - name: Collect Profiles
+          description: >
+            async collect_profiles(logins, fetch_json, concurrency=10) fetches
+            profile and repos for every login through the injected fetcher and
+            returns parsed pairs in input order.
+          behavior: >
+            For each login it awaits fetch_json("/users/<login>") and
+            fetch_json("/users/<login>/repos?per_page=100"), builds
+            {"profile": Expert Profile, "stats": Repo Stats}, and returns the
+            list in the order of the input logins. At most `concurrency`
+            logins are in flight at once (asyncio.Semaphore). If fetch_json
+            raises for a login, that entry is None and the others are
+            unaffected. The module itself opens no sockets: fetch_json is the
+            only door to the network.
+          requirements: [Stdlib Only, Offline Tests]
+          guardrails: [No Network In Core]
+          steps:
+            - calls: Parse Profile Data
+            - produces: Expert Pair
+          examples:
+            - given: >
+                the 5 logins of tests/fixtures/search_users_python.json items
+                (karpathy, openai, google, huggingface, rafaballerini) and a
+                fake async fetch_json that returns the parsed
+                user_torvalds.json for any /users/<login> and the parsed
+                repos_torvalds.json for any /users/<login>/repos
+              when: collect_profiles(logins, fetch_json, concurrency=2) is awaited
+              then: >
+                the result has 5 entries in input order, each with profile
+                login "torvalds" and stats total_stars 262418, and the fake
+                was called exactly 10 times
+            - given: the same 5 logins and a fetcher that raises ValueError for "google" only
+              when: collect_profiles is awaited
+              then: entry 2 is None and the other 4 entries are parsed pairs
+              ref: Tolerant Parser
+    - name: processors
+      description: Expertise scoring over parsed profile data.
+      functions:
+        - name: Score Expertise
+          description: >
+            score_expertise(profile, stats) merges an Expert Profile and its
+            Repo Stats into an Expert Record with expertise_score and
+            primary_language.
+          behavior: >
+            expertise_score = followers + 2 * total_stars (integers).
+            primary_language is the language with the highest count in
+            stats["languages"] (ties broken by lexicographic order), or None
+            when languages is empty. The record carries the Expert Profile
+            keys plus total_stars, languages, expertise_score,
+            primary_language. No second serialization of the profile.
+          requirements: [Stdlib Only]
+          steps:
+            - reads: Expert Profile
+            - reads: Repo Stats
+            - produces: Expert Record
+          examples:
+            - given: >
+                the torvalds profile (followers 325466) and stats
+                (total_stars 262418, languages {"C": 8, "OpenSCAD": 1})
+              when: score_expertise is called
+              then: expertise_score is 850302 and primary_language is "C"
+            - given: 'stats with languages {} and total_stars 0, profile with followers 7'
+              when: score_expertise is called
+              then: expertise_score is 7 and primary_language is None
+    - name: storage
+      description: SQLite persistence and ranking of expert records.
+      functions:
+        - name: Store Experts
+          description: >
+            save_experts(db_path, records) upserts Expert Records into the
+            experts table keyed by login; top_experts(db_path, n=10) returns
+            the n records with the highest expertise_score.
+          behavior: >
+            save_experts creates the schema if absent (CREATE TABLE IF NOT
+            EXISTS experts, login TEXT PRIMARY KEY), upserts by login
+            (INSERT ... ON CONFLICT(login) DO UPDATE), stores languages as a
+            JSON string, and returns the number of records written.
+            top_experts returns Expert Records ordered by expertise_score
+            DESC, languages decoded back to a dict.
+          requirements: [Stdlib Only]
+          guardrails: [No Network In Core]
+          steps:
+            - reads: Expert Record
+            - modifies: Experts Database
+          examples:
+            - given: the torvalds Expert Record (expertise_score 850302) saved twice into a fresh temp db
+              when: the experts table is counted
+              then: there is exactly 1 row
+            - given: 'that db plus a second record login "minnow" with expertise_score 100'
+              when: top_experts(db_path, 1) is called
+              then: >
+                the result is one record, login "torvalds", expertise_score
+                850302, languages equal to {"C": 8, "OpenSCAD": 1}
+      dataObjects:
+        - name: Experts Database
+          description: A SQLite file with one table, experts, keyed by login.
+          schema: >
+            experts(login TEXT PRIMARY KEY, id INTEGER, name TEXT,
+            company TEXT, location TEXT, followers INTEGER,
+            public_repos INTEGER, created_at TEXT, total_stars INTEGER,
+            languages TEXT, expertise_score INTEGER, primary_language TEXT)
+  dataObjects:
+    - name: Rate Limit State
+      description: Parsed GitHub rate-limit headers.
+      schema:
+        limit: int
+        remaining: int
+        reset: int (unix seconds)
+    - name: GitHub User JSON
+      description: >
+        A verbatim GitHub REST /users/<login> response; the real sample is
+        tests/fixtures/user_torvalds.json (fetched 2026-09-28).
+      schema: see tests/fixtures/user_torvalds.json
+    - name: GitHub Repos JSON
+      description: >
+        A verbatim GitHub REST /users/<login>/repos response list; the real
+        sample is tests/fixtures/repos_torvalds.json (12 items).
+      schema: see tests/fixtures/repos_torvalds.json
+    - name: Expert Profile
+      description: The parsed subset of a GitHub user this system keeps.
+      schema:
+        login: str
+        id: int
+        name: str or None
+        company: str or None
+        location: str or None
+        followers: int
+        public_repos: int
+        created_at: str or None
+    - name: Repo Stats
+      description: Aggregates over one user's repos; forks excluded from stats.
+      schema:
+        login: str
+        repo_count: int
+        non_fork_count: int
+        total_stars: int
+        languages: dict language -> non-fork repo count
+    - name: Expert Pair
+      description: One collector result.
+      schema:
+        profile: Expert Profile
+        stats: Repo Stats
+    - name: Expert Record
+      description: Expert Profile keys plus scoring fields; see Score Expertise.
+      schema:
+        "...Expert Profile keys": ""
+        total_stars: int
+        languages: dict
+        expertise_score: int
+        primary_language: str or None
+Requirement:
+  - name: Stdlib Only
+    description: >
+      Python 3.9-compatible syntax, standard library only (json, asyncio,
+      sqlite3, unittest). No third-party runtime dependency in v1.
+  - name: Offline Tests
+    description: >
+      No test opens a network connection. All GitHub data in tests comes from
+      tests/fixtures/*, which are verbatim API responses.
+  - name: Real Fixtures
+    description: >
+      Every number in the examples is read from tests/fixtures/* fetched from
+      api.github.com on 2026-09-28, not invented.
+Guardrail:
+  - name: Tolerant Parser
+    description: >
+      Missing optional fields and a failing single login degrade to
+      None/0/skip, never to an exception that kills the batch.
+  - name: No Network In Core
+    description: >
+      No module under megatron/ imports urllib.request, http.client,
+      requests or socket in v1; the fetcher is injected.

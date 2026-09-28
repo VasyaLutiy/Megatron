@@ -1,0 +1,7 @@
+HTTP/2 200 
+etag: W/"859a4a0ba6313b3ab9d438ea2228fe1a75ab378ab55ed0625ea647a070d6810b"
+x-ratelimit-limit: 60
+x-ratelimit-remaining: 59
+x-ratelimit-used: 1
+x-ratelimit-resource: core
+x-ratelimit-reset: 1790594886
