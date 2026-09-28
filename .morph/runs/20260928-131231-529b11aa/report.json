@@ -1,0 +1,157 @@
+{
+  "deck_id": "20260928-131231-529b11aa",
+  "completed_at": "2026-09-28T13:13:09.235",
+  "branch": "morph/20260928-131231-529b11aa",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "upsert",
+      "status400",
+      "concurrency"
+    ]
+  ],
+  "batch_ids": [
+    "local-33359d134129468db03cef5b994cde91"
+  ],
+  "outcomes": {
+    "upsert": {
+      "custom_id": "upsert",
+      "status": "written",
+      "paths": [
+        "../../Megatron/tests/test_store_upsert.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "upsert",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": null,
+      "diffstat": null,
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_store_upsert.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_store_upsert.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "status400": {
+      "custom_id": "status400",
+      "status": "written",
+      "paths": [
+        "../../Megatron/tests/test_client_status_boundary.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "status400",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": null,
+      "diffstat": null,
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_client_status_boundary.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_client_status_boundary.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "concurrency": {
+      "custom_id": "concurrency",
+      "status": "written",
+      "paths": [
+        "../../Megatron/tests/test_collect_concurrency.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "concurrency",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": null,
+      "diffstat": null,
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_collect_concurrency.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_collect_concurrency.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "status400": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790597552-nROcmu4JQbMD0WIqy7uL",
+      "input_tokens": 7285,
+      "output_tokens": 342,
+      "cost": 0.0010741875,
+      "finish_reason": "stop"
+    },
+    "upsert": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790597552-h04MBUPDAT65N2Bd3UhG",
+      "input_tokens": 5295,
+      "output_tokens": 672,
+      "cost": 0.0006212565,
+      "finish_reason": "stop"
+    },
+    "concurrency": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790597552-y40De0a6tNcxrYaTeU5r",
+      "input_tokens": 5051,
+      "output_tokens": 1230,
+      "cost": 0.0011667525,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 17631,
+    "output_tokens": 2244,
+    "cost": 0.0028621964999999997,
+    "requests": 3,
+    "requests_with_usage": 3
+  },
+  "orchestrator_usage": {}
+}
