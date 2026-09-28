@@ -186,10 +186,10 @@ System:
           examples:
             - given: fake fetch_json for torvalds and minnow (copy of user_torvalds.json, login minnow, followers 7, repos [])
               when: harvest(["torvalds", "minnow"], fake, db) is awaited
-              then: saved 2, top_experts scores [850302, 7]
+              then: saved 2, top_experts scores [1635, 90]
             - given: a real GitHubClient over a fake transport serving the 3 repos pages
               when: main(["harvest", "torvalds", "--db", db], fetch_json=client.fetch_json)
-              then: exit 0, total_stars 262425, expertise_score 850316
+              then: exit 0, total_stars 262425, expertise_score 1635
             - given: urllib_transport patched to serve search_page1/2 with their headers (v4)
               when: main(["discover", "followers:>5000", "--pages", "2"])
               then: exit 0, stdout = the 60 logins of pages 1 and 2 in API order, one per line
@@ -230,7 +230,7 @@ System:
             Repo Stats into an Expert Record with expertise_score and
             primary_language.
           behavior: >
-            expertise_score = followers + 2 * total_stars (integers).
+            expertise_score = round(100*log10(followers+1) + 200*log10(total_stars+1)) (v5).
             primary_language is the language with the highest count in
             stats["languages"] (ties broken by lexicographic order), or None
             when languages is empty. The record carries the Expert Profile
@@ -246,10 +246,10 @@ System:
                 the torvalds profile (followers 325466) and stats
                 (total_stars 262418, languages {"C": 8, "OpenSCAD": 1})
               when: score_expertise is called
-              then: expertise_score is 850302 and primary_language is "C"
+              then: expertise_score is 1635 and primary_language is "C"
             - given: 'stats with languages {} and total_stars 0, profile with followers 7'
               when: score_expertise is called
-              then: expertise_score is 7 and primary_language is None
+              then: expertise_score is 90 and primary_language is None
     - name: storage
       description: SQLite persistence and ranking of expert records.
       functions:
@@ -271,18 +271,18 @@ System:
             - reads: Expert Record
             - modifies: Experts Database
           examples:
-            - given: the torvalds Expert Record (expertise_score 850302) saved twice into a fresh temp db
+            - given: the torvalds Expert Record (expertise_score 1635) saved twice into a fresh temp db
               when: the experts table is counted
               then: there is exactly 1 row
             - given: 'that db plus a second record login "minnow" with expertise_score 100'
               when: top_experts(db_path, 1) is called
               then: >
                 the result is one record, login "torvalds", expertise_score
-                850302, languages equal to {"C": 8, "OpenSCAD": 1}
+                1635, languages equal to {"C": 8, "OpenSCAD": 1}
             - given: >
                 the torvalds record built from the fixtures (followers 325466,
-                total_stars 262418, expertise_score 850302), then the live row
-                of the 2026-09-28 smoke (325474, 262428, 850330) for the same login
+                total_stars 262418, expertise_score 1635), then the live row
+                of the 2026-09-28 smoke (325474, 262428, 1635) for the same login
               when: both are saved in turn into a fresh temp db
               then: >
                 exactly 1 row, and top_experts returns the second record whole;
