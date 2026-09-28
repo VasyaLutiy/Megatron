@@ -280,7 +280,9 @@ System:
             (INSERT ... ON CONFLICT(login) DO UPDATE), stores languages as a
             JSON string, and returns the number of records written.
             top_experts returns Expert Records ordered by expertise_score
-            DESC, languages decoded back to a dict.
+            DESC, then followers DESC, then login ASC (binary, v7) -- a total
+            order independent of insertion order; languages decoded back to
+            a dict.
           requirements: [Stdlib Only]
           guardrails: [No Network In Core]
           steps:
@@ -306,6 +308,12 @@ System:
             - given: a fresh temp path, then the same db after saving torvalds and minnow (v6)
               when: existing_logins(db_path) is called
               then: set() first, then {"torvalds", "minnow"}
+            - given: google/huggingface (1657) and deepseek-ai/github (1668) with their real followers, saved in reverse order (v7)
+              when: top_experts(db_path, 4) is called
+              then: deepseek-ai, github, google, huggingface -- ties broken by followers DESC
+            - given: carol, alice, bob (score 1000, followers 500) and zed (1000, 900), saved in that order (v7)
+              when: top_experts(db_path) is called
+              then: zed, alice, bob, carol -- equal score and followers broken by login ASC
       dataObjects:
         - name: Experts Database
           description: A SQLite file with one table, experts, keyed by login.
