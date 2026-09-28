@@ -281,3 +281,45 @@ provider bill, per-file numstat, final test count, mutant kill table, and the
 scout line: files named / files actually touched / missed / extra.
 
 ## 11. Actual
+
+One run, processor `glm` (z-ai/glm-5.3-flash, sync), `--root` absolute:
+`20260928-163933-4b2a87e2` (deck `v7.json`, branch
+`morph/20260928-163933-4b2a87e2`, unmerged), 2 generations, **1 min** wall.
+
+| quantity | prediction | actual |
+|---|---|---|
+| cards | 2 | **2 written**, 0 failed, 0 skipped |
+| generations | 2 | 2 |
+| provider bill | < $0.03 | **$0.00309** (2 requests; order-v7 $0.00181, order-judge $0.00129) |
+| cards with regeneration | 0–1 | **0** (both on attempt 1) |
+| mutants surviving | 0 of 14 | **0 of 14** (7 `mutant killed` in each chain; M-O6 and M-O7 each killed by exactly 1 failing test, as the §3 table predicted) |
+| tests at the end | 107 + 10…16 | **117 passed** (107 + 5 + 5) |
+| removed lines outside 79–90 | 0 | **0** (one removed line, 88, the old `ORDER BY`) |
+| `*.v[0-9].py` files committed | 0 | **0** |
+
+Numstat: `megatron/storage.py` +4/−1 (the query plus a two-line docstring
+sentence on the tie-break), `tests/test_top_order.py` +140,
+`tests/test_order_examples.py` +130. `tests/fixtures` and `experts.db`
+unchanged. `.morph/rejected/`: no new file (syntax gate passed both answers).
+
+**Falsifiable claim — held:** 2/2 written, removed lines ⊆ 79–90, 117 ≥ 117
+tests green, 0 survivors, no variant copy.
+
+**Scout:** named **2** files (`megatron/storage.py`, `tests/test_storage.py`);
+the run touched **3** (`megatron/storage.py` + 2 new test files).
+Existing-code hit **1 of 1** (the right file, the right line 88). Extra: **1**
+(`tests/test_storage.py` — not wrong as a place, but §2.4 puts new tests in new
+files). Missed: **0** existing files; the two new test files could not be named
+(scout targets must exist at the ref). Note: the scout localized by
+`grep 'ORDER BY'` — a generic SQL keyword, not a task constant, but a lexical
+path rather than a purely semantic one.
+
+Findings:
+
+1. No `variants` + the instruction line "no `---` line, no file path" — zero
+   syntax-gate rejections and zero variant copies (v5, v6 each had one).
+2. Pre-checking the mutant table against a reference query (§3) made the
+   acceptance deterministic before the run: the observed kill counts per
+   mutant matched the table exactly in both chains.
+3. Cosmetic: the docstring sentence was inserted without a blank line before
+   the existing "languages is decoded…" paragraph. Within the contract.
