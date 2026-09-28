@@ -1,4 +1,5 @@
 """Harvest CLI: fetch profiles, score, save (PaukMegatron v2.0).
+Discovery CLI: `discover <query>` walks search pages and prints logins.
 
 No network library is imported here; the fetcher is injected. When
 `main` is called without an injected fetch_json it builds a
@@ -38,14 +39,35 @@ async def harvest(
 
 def main(argv=None, fetch_json=None):
     # type: (typing.Optional[typing.List[str]], typing.Optional[typing.Callable[[str], typing.Awaitable[dict]]]) -> int
-    """CLI entry point: `megatron harvest <login>... [--db] [--concurrency]`."""
+    """CLI entry point: `megatron harvest <login>...` / `megatron discover <query>`."""
     parser = argparse.ArgumentParser(prog="megatron")
     sub = parser.add_subparsers(dest="command", required=True)
     p_harvest = sub.add_parser("harvest")
     p_harvest.add_argument("logins", nargs="+")
     p_harvest.add_argument("--db", default="experts.db")
     p_harvest.add_argument("--concurrency", type=int, default=10)
+    p_discover = sub.add_parser("discover")
+    p_discover.add_argument("query")
+    p_discover.add_argument("--pages", type=int, default=1)
     args = parser.parse_args(argv)
+
+    if args.command == "discover":
+        from megatron import search
+        from megatron.github_client import GitHubClient
+
+        client = GitHubClient()
+        result = asyncio.run(search.discover_logins(client, args.query, args.pages))
+        for login in result["logins"]:
+            print(login)
+        print(
+            "discovered {} of {}, pages {}".format(
+                len(result["logins"]), result["total_count"], result["pages"]
+            ),
+            file=sys.stderr,
+        )
+        if result["incomplete_results"]:
+            print("warning: incomplete_results", file=sys.stderr)
+        return 0
 
     if fetch_json is None:
         from megatron.github_client import GitHubClient  # noqa: deferred import
