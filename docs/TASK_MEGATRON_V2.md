@@ -248,4 +248,25 @@ provider bill, final test count, `git log --oneline` of the run branch.
 
 ## 11. Actual
 
-`<after the run>`
+Run `20260928-123443-4f33236b`, processor `glm` (z-ai/glm-5.3-flash, sync),
+2026-09-28, branch `morph/20260928-123443-4f33236b`. Archive:
+`.morph/runs/20260928-123443-4f33236b/`.
+
+| quantity | prediction | actual |
+|---|---|---|
+| cards | 4 | 4 written, 0 failed, 0 skipped |
+| generations | 2 | 2 (client, cli, order → e2e) |
+| provider bill | < $0.05 | **$0.0110** (5 requests, 43,223 in / 15,215 out tokens) |
+| cards with regeneration | ≤ 1 | **1**: `client`, attempt 1 returned `github_client.py` twice and was rejected by format before acceptance; attempt 2 passed |
+| mutants surviving the order test | 0 of 2 | **0 of 2** (as_completed and reversed both red) |
+| tests at the end | ≥ 58 | **56** — miss: §3 has 16 examples (8+4+2+2), not 18; one test per example was written |
+| wall time | — | 4m43s |
+
+Per card: client +375/−0 (2 attempts), cli +212/−0, order +97/−0,
+e2e +167/−0 — 1331 insertions, 0 deletions, no v1 file touched.
+
+**Falsifiable claim — held:** every card written within ≤ 2 attempts, the
+order test red on both mutants on its first accepted attempt.
+
+Not accepted by anything here: `urllib_transport` against the real API
+(operator smoke, §7).
