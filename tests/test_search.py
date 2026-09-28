@@ -244,10 +244,15 @@ class TestDiscoverLogins(unittest.TestCase):
         seen2 = []
         fake2 = make_fake({U1: (load_body("search_page1.json"), H1)}, seen2)
         client2 = GitHubClient(token="x", transport=fake2)
-        with self.assertRaises(GitHubError) as caught:
-            asyncio.run(search.discover_logins(client2, Q, 2))
-        self.assertEqual(caught.exception.status, 404,
-                         msg="an unrouted URL raises GitHubError 404")
+        result2 = asyncio.run(search.discover_logins(client2, Q, 2))
+        self.assertEqual(
+            result2,
+            {"logins": L1, "total_count": 1230, "incomplete_results": False,
+             "pages": 1, "failed_page": 2, "failed_status": 404},
+            msg="an unrouted page 2 gives the partial result with failed "
+                "keys")
+        self.assertEqual(seen2, [U1, U2],
+                         msg="transport is called with U1 then U2 verbatim")
         self.assertTrue(client2.transport is fake2,
                         msg="after the error client.transport is restored")
 

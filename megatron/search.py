@@ -12,7 +12,7 @@ through the GitHubClient it is given.
 
 from typing import Dict, List
 
-from megatron.github_client import API_ROOT, parse_next_link
+from megatron.github_client import API_ROOT, GitHubError, parse_next_link
 
 _UNRESERVED = set(
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~"
@@ -64,6 +64,9 @@ async def discover_logins(client, query, pages, per_page=30):
     client's transport is wrapped for the duration of the call so the
     Link header of each response can be seen; the original transport is
     restored in finally, also when an error propagates.
+    On a GitHubError while fetching page N the walk stops, no further
+    request is made, and the result carries the pages fetched so far
+    plus the keys failed_page and failed_status.
     """
     if pages < 1:
         raise ValueError("pages must be >= 1, got %r" % (pages,))
@@ -87,7 +90,17 @@ async def discover_logins(client, query, pages, per_page=30):
         fetched = 0
         url = search_url(query, per_page)
         while fetched < pages:
-            data = await client.fetch_json(url)
+            try:
+                data = await client.fetch_json(url)
+            except GitHubError as error:
+                return {
+                    "logins": logins,
+                    "total_count": total_count,
+                    "incomplete_results": incomplete_results,
+                    "pages": fetched,
+                    "failed_page": fetched + 1,
+                    "failed_status": error.status,
+                }
             page = parse_search_page(data)
             if total_count is None:
                 total_count = page["total_count"]
