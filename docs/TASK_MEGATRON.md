@@ -142,4 +142,23 @@ sessions.
 
 ## 11. Actual
 
-*(to be filled after the run)*
+Run 2026-09-28, Scenario C, two Claude Code agents on claude-sonnet-5.
+
+| quantity | prediction | actual |
+|---|---|---|
+| cards in the deck | 10 (5 code + 5 judge) | 10 — all accepted |
+| generations | 3 | 3 (code gen 1 → collect + 4 judges → collect-judge) |
+| executor bill | $0 beyond subscription | $0; API-equivalent by ccledger ≈ $2.81 (executor $2.09, judge $0.71) |
+| cards with >1 acceptance run | ≤ 2 | **0** — every card green on the first run |
+| judge defects found in code | ≤ 1 | 0 |
+| tests at the end | ≥ 20 | 34 (21 executor + 13 judge) |
+
+**Falsifiable claim — held:** all 5 code cards reached exit 0 in 1 run each
+(≤ 3 predicted); the judge's independent tests failed on 0 code cards
+(≤ 1 predicted).
+
+Wall time: deck commit 11:40:34 → last judge commit 11:48:12 local, 7m38s
+end to end; 5 code commits in 2m09s, 5 judge commits in 1m15s. Loss noted:
+the executor's inner iteration journal did not hand back cleanly (same class
+as Morph's unserialized `earlier_failures`); per-card run counts came from
+its retrospective message plus an independent re-run of all acceptances.
