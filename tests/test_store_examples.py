@@ -22,7 +22,7 @@ def _torvalds_record():
         "created_at": "2011-09-06T18:54:47Z",
         "total_stars": 262418,
         "languages": {"C": 8, "OpenSCAD": 1},
-        "expertise_score": 850302,
+        "expertise_score": 1635,
         "primary_language": "C",
     }
 
@@ -61,14 +61,14 @@ class StoreExpertsTests(unittest.TestCase):
 
     def test_top_experts_orders_by_score_desc_and_decodes_languages(self):
         # type: () -> None
-        """Store Experts example 2: minnow (100) + torvalds (850302); top 1."""
+        """Store Experts example 2: minnow (100) + torvalds (1635); top 1."""
         save_experts(self.db_path, [_torvalds_record(), _minnow_record()])
         result = top_experts(self.db_path, 1)
         self.assertEqual(len(result), 1, msg="top_experts(db, 1) returns 1 record")
         self.assertEqual(result[0]["login"], "torvalds",
                          msg="highest score record is torvalds")
-        self.assertEqual(result[0]["expertise_score"], 850302,
-                         msg="expertise_score is 850302")
+        self.assertEqual(result[0]["expertise_score"], 1635,
+                         msg="expertise_score is 1635")
         self.assertEqual(result[0]["languages"], {"C": 8, "OpenSCAD": 1},
                          msg="languages decoded back to a dict")
 
