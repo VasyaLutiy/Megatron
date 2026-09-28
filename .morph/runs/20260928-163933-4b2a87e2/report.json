@@ -1,0 +1,148 @@
+{
+  "deck_id": "20260928-163933-4b2a87e2",
+  "completed_at": "2026-09-28T16:40:46.129",
+  "branch": "morph/20260928-163933-4b2a87e2",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "order-v7"
+    ],
+    [
+      "order-judge"
+    ]
+  ],
+  "batch_ids": [
+    "local-58e957b91c51488eb1d1b37a4bf9d137",
+    "local-f6b5f1ebeff040d183fd1fce7d503016"
+  ],
+  "outcomes": {
+    "order-v7": {
+      "custom_id": "order-v7",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/storage.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_top_order.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "order-v7",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "b4cf98593a7463aa1ef28ae83d33deb6aa978cd4",
+      "diffstat": [
+        {
+          "path": "megatron/storage.py",
+          "insertions": 4,
+          "deletions": 1
+        },
+        {
+          "path": "tests/test_top_order.py",
+          "insertions": 140,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/storage.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/storage.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_top_order.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_top_order.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "order-judge": {
+      "custom_id": "order-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_order_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "order-judge",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "39d905203c238686293c18e54a4c24d2f8afc1bc",
+      "diffstat": [
+        {
+          "path": "tests/test_order_examples.py",
+          "insertions": 130,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_order_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_order_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "order-v7": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790609973-IhkJR7vB87US97UXfb51",
+      "input_tokens": 5703,
+      "output_tokens": 2538,
+      "cost": 0.0018057825,
+      "finish_reason": "stop"
+    },
+    "order-judge": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790610015-rDs47kGaQc8fzmjvQHXL",
+      "input_tokens": 4628,
+      "output_tokens": 1640,
+      "cost": 0.00128707,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 10331,
+    "output_tokens": 4178,
+    "cost": 0.0030928525,
+    "requests": 2,
+    "requests_with_usage": 2
+  },
+  "orchestrator_usage": {}
+}
