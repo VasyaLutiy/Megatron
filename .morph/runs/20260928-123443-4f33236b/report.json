@@ -1,0 +1,298 @@
+{
+  "deck_id": "20260928-123443-4f33236b",
+  "completed_at": "2026-09-28T12:39:26.146",
+  "branch": "morph/20260928-123443-4f33236b",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "client",
+      "cli",
+      "order"
+    ],
+    [
+      "e2e"
+    ]
+  ],
+  "batch_ids": [
+    "local-fc1fd7afe81145bcaf98c918f010c783",
+    "local-8e4ce5a29fa4403b821fc7017fb72055",
+    "local-d5739f4106f841a588c046a506505e1e"
+  ],
+  "outcomes": {
+    "cli": {
+      "custom_id": "cli",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/cli.py",
+        "/home/john/Documents/Work2026/Megatron/megatron/__main__.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_cli.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "cli",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "d16df90680664d6c2945e4264c71b8e4c45d21b7",
+      "diffstat": [
+        {
+          "path": "megatron/__main__.py",
+          "insertions": 8,
+          "deletions": 0
+        },
+        {
+          "path": "megatron/cli.py",
+          "insertions": 61,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_cli.py",
+          "insertions": 143,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/cli.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/cli.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "megatron/__main__.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/__main__.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_cli.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_cli.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "order": {
+      "custom_id": "order",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_collect_order.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "order",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "17d0cecad1e8e5bec84bff0832f13474fe1e30e5",
+      "diffstat": [
+        {
+          "path": "tests/test_collect_order.py",
+          "insertions": 97,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_collect_order.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_collect_order.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "client": {
+      "custom_id": "client",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/github_client.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_github_client.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 2,
+      "winning_variant": "client.r1",
+      "acceptance_output": null,
+      "earlier_failures": "The previous answer returned megatron/github_client.py more than once, so there is no telling which body was meant. Answer again with exactly one 'FILE: <path>' block per file, for: megatron/github_client.py, tests/test_github_client.py.",
+      "commit": "157b1ba45bd9c09541dfaefab72ee418e6670482",
+      "diffstat": [
+        {
+          "path": "megatron/github_client.py",
+          "insertions": 133,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_github_client.py",
+          "insertions": 242,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/github_client.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/github_client.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_github_client.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_github_client.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "e2e": {
+      "custom_id": "e2e",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_harvest_e2e.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "e2e",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "2adc578b043203454daeb73acfea70012139a0e3",
+      "diffstat": [
+        {
+          "path": "tests/test_harvest_e2e.py",
+          "insertions": 167,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_harvest_e2e.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_harvest_e2e.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "order": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790595284-lAiIJU9i5T9e6kKK7SF2",
+      "input_tokens": 8390,
+      "output_tokens": 717,
+      "cost": 0.00137445,
+      "finish_reason": "stop"
+    },
+    "cli": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790595284-hWvifNSItUuL4AtEqvHm",
+      "input_tokens": 7493,
+      "output_tokens": 1848,
+      "cost": 0.0017407575,
+      "finish_reason": "stop"
+    },
+    "client": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790595284-iuBvZBaMiPkPjhsTWWbN",
+      "input_tokens": 8808,
+      "output_tokens": 5768,
+      "cost": 0.00357442,
+      "finish_reason": "stop"
+    },
+    "client.r1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790595401-nm8UrJYiE5vS7QoAmJfY",
+      "input_tokens": 8886,
+      "output_tokens": 5153,
+      "cost": 0.002839918,
+      "finish_reason": "stop"
+    },
+    "e2e": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790595517-ywAMxHyG6PZSzF4ck6Fb",
+      "input_tokens": 9646,
+      "output_tokens": 1729,
+      "cost": 0.001481618,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 43223,
+    "output_tokens": 15215,
+    "cost": 0.0110111635,
+    "requests": 5,
+    "requests_with_usage": 5
+  },
+  "orchestrator_usage": {}
+}
