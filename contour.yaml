@@ -190,6 +190,37 @@ System:
             - given: a real GitHubClient over a fake transport serving the 3 repos pages
               when: main(["harvest", "torvalds", "--db", db], fetch_json=client.fetch_json)
               then: exit 0, total_stars 262425, expertise_score 850316
+            - given: urllib_transport patched to serve search_page1/2 with their headers (v4)
+              when: main(["discover", "followers:>5000", "--pages", "2"])
+              then: exit 0, stdout = the 60 logins of pages 1 and 2 in API order, one per line
+    - name: search
+      description: GitHub user search -> logins, paged along Link rel="next" (v4).
+      functions:
+        - name: Discover Logins
+          description: >
+            discover_logins(client, query, pages, per_page=30) fetches
+            search_url(query) and then each rel="next" URL verbatim through
+            client.fetch_json, parsing every page with parse_search_page into
+            {"logins", "total_count", "incomplete_results", "pages"}.
+          behavior: >
+            See docs/TASK_MEGATRON_V4.md section 2.3. Search has its own
+            rate-limit resource (x-ratelimit-resource search, 10/min anonymous);
+            the client's single rate-limit state applies to every page.
+          requirements: [Stdlib Only, Offline Tests, Real Fixtures]
+          guardrails: [No Network In Core]
+          steps:
+            - calls: GitHub Client
+            - reads: GitHub Search JSON
+          examples:
+            - given: tests/fixtures/search_page{1,2}.json with their .headers.txt
+              when: discover_logins(client, "followers:>5000", 2)
+              then: 60 logins, page 1's 30 then page 2's 30; total_count 1230; 2 requests
+            - given: search_empty.json (no link header)
+              when: discover_logins(client, "followers:>100000000", 3)
+              then: logins [], total_count 0, pages 1, one request
+            - given: page 1 headers with x-ratelimit-remaining "0", clock 1790599575
+              when: discover_logins(client, "followers:>5000", 2)
+              then: exactly one sleep of 60 seconds before the page-2 request
     - name: processors
       description: Expertise scoring over parsed profile data.
       functions:
@@ -300,6 +331,11 @@ System:
         non_fork_count: int
         total_stars: int
         languages: dict language -> non-fork repo count
+    - name: GitHub Search JSON
+      description: >
+        Verbatim /search/users body: total_count, incomplete_results, items[*].login
+        (tests/fixtures/search_page1.json, search_page2.json, search_empty.json).
+      schema: see tests/fixtures/search_page1.json
     - name: Expert Pair
       description: One collector result.
       schema:
