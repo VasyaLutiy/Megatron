@@ -1,0 +1,310 @@
+{
+  "deck_id": "20260928-154939-474d8d7c",
+  "completed_at": "2026-09-28T15:59:13.204",
+  "branch": "morph/20260928-154939-474d8d7c",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "search-v6",
+      "store-v6"
+    ],
+    [
+      "cli-v6"
+    ],
+    [
+      "resilience-judge"
+    ]
+  ],
+  "batch_ids": [
+    "local-f0f6e1d5632c42d1902ebb122bd50073",
+    "local-a7b4719071d44452a1fb9b96e5444413",
+    "local-3de0ae384b734e118e2eec5f3aadcf54",
+    "local-b1d05261f35d4a148b38a696f4d0833f",
+    "local-ef4b1df1f4d6482386469f633e80235d",
+    "local-fae908811468400992b078a9abc3e782"
+  ],
+  "outcomes": {
+    "store-v6": {
+      "custom_id": "store-v6",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/storage.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_storage_existing.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 2,
+      "winning_variant": "store-v6.r1",
+      "acceptance_output": null,
+      "earlier_failures": "The previous answer was rejected before acceptance could run: a file it wrote is not valid source in its language.\n  - megatron/storage.py: line 1: SyntaxError: invalid syntax (parse)\n  - tests/test_storage_existing.py: line 1: SyntaxError: invalid syntax (parse)\nThis is most likely a PROTOCOL error, not a logic error: the answer probably contained more than one fenced code block (a diff, an edit summary, an example) and they were concatenated into the file, or prose was merged into what should have been pure code.\nResend the COMPLETE file(s) as valid source, each as EXACTLY ONE fenced block and nothing else. The fenced block must hold only the code of that file -- no file path, no prose, no notes, no second fence for a diff or an example -- and must not be cut off.",
+      "commit": "525469b946cde64ce9b36336e5f437e6fc518822",
+      "diffstat": [
+        {
+          "path": "megatron/storage.py",
+          "insertions": 19,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_storage_existing.py",
+          "insertions": 55,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/storage.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/storage.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_storage_existing.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_storage_existing.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "search-v6": {
+      "custom_id": "search-v6",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/search.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_search.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_discover_partial.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 3,
+      "winning_variant": "search-v6.r2",
+      "acceptance_output": null,
+      "earlier_failures": "................                                                         [100%]\n16 passed in 0.06s\nDELETION GUARD FAILED: removed old line(s) [66]; only 15,84-109 may change\n",
+      "commit": "b4a8874a9ca0149c80687b7ab2f2ae1a6f4f9e3d",
+      "diffstat": [
+        {
+          "path": "megatron/search.py",
+          "insertions": 15,
+          "deletions": 2
+        },
+        {
+          "path": "tests/test_discover_partial.py",
+          "insertions": 141,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_search.py",
+          "insertions": 9,
+          "deletions": 4
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/search.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/search.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_search.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_search.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_discover_partial.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_discover_partial.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "cli-v6": {
+      "custom_id": "cli-v6",
+      "status": "failed",
+      "paths": [],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 3,
+      "winning_variant": null,
+      "acceptance_output": "F.........                                                               [100%]\n=================================== FAILURES ===================================\n________ ResilienceTestCase.test_K1_skip_existing_fetches_only_missing _________\ntests/test_cli_resilience.py:257: in test_K1_skip_existing_fetches_only_missing\n    self.assertEqual(\nE   AssertionError: Lists differ: ['minnow', 'torvalds'] != ['torvalds', 'minnow']\nE   \nE   First differing element 0:\nE   'minnow'\nE   'torvalds'\nE   \nE   - ['minnow', 'torvalds']\nE   + ['torvalds', 'minnow'] : db holds 2 rows\n=========================== short test summary info ============================\nFAILED tests/test_cli_resilience.py::ResilienceTestCase::test_K1_skip_existing_fetches_only_missing\n1 failed, 9 passed in 0.18s\n",
+      "earlier_failures": null,
+      "commit": null,
+      "diffstat": null,
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/cli.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/cli.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_cli_resilience.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_cli_resilience.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "resilience-judge": {
+      "custom_id": "resilience-judge",
+      "status": "skipped",
+      "paths": [],
+      "reason": "cli-v6",
+      "finish_reason": null,
+      "attempts": 0,
+      "winning_variant": null,
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": null,
+      "diffstat": null,
+      "syntax_gate": null
+    }
+  },
+  "usage": {
+    "store-v6": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790606980-AEd3NXeIMDkRNGDjGfQA",
+      "input_tokens": 6780,
+      "output_tokens": 1268,
+      "cost": 0.00140335,
+      "finish_reason": "stop"
+    },
+    "search-v6": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790606980-wN1JbXjiBKDkX9WzjCnc",
+      "input_tokens": 11140,
+      "output_tokens": 6083,
+      "cost": 0.004005625,
+      "finish_reason": "stop"
+    },
+    "store-v6.r1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607070-iAYGi1LNqvt9FU0SLjrW",
+      "input_tokens": 6983,
+      "output_tokens": 1274,
+      "cost": 0.0014317825,
+      "finish_reason": "stop"
+    },
+    "search-v6.r1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607070-UrMcEiVyHl2qJxW5BlXH",
+      "input_tokens": 14389,
+      "output_tokens": 5721,
+      "cost": 0.0042660225,
+      "finish_reason": "stop"
+    },
+    "search-v6.r2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607164-0KyyjQAbO3DtYsKUKg9f",
+      "input_tokens": 14367,
+      "output_tokens": 6156,
+      "cost": 0.0033383325,
+      "finish_reason": "stop"
+    },
+    "cli-v6": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607264-ubuS74FpVDxCHRaO8Dyi",
+      "input_tokens": 11907,
+      "output_tokens": 4099,
+      "cost": 0.0032602175,
+      "finish_reason": "stop"
+    },
+    "cli-v6.r1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607342-Dz5exBqcxUpVYF2107aC",
+      "input_tokens": 15784,
+      "output_tokens": 4470,
+      "cost": 0.00391221,
+      "finish_reason": "stop"
+    },
+    "cli-v6.r2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607448-jOimD69lUd7QPJPaDwzF",
+      "input_tokens": 15439,
+      "output_tokens": 4465,
+      "cost": 0.0038660975,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 96789,
+    "output_tokens": 33536,
+    "cost": 0.025483637499999996,
+    "requests": 8,
+    "requests_with_usage": 8
+  },
+  "orchestrator_usage": {}
+}
