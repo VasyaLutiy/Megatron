@@ -78,6 +78,8 @@ def top_experts(db_path, n=10):
     # type: (str, int) -> List[Dict[str, Any]]
     """Return the n records with the highest expertise_score, DESC.
 
+    Ties are broken by followers DESC, then login ASC, independent of
+    insertion order.
     languages is decoded back to a dict; rows come back as Expert Records.
     """
     conn = sqlite3.connect(db_path)
@@ -85,7 +87,8 @@ def top_experts(db_path, n=10):
     try:
         cur = conn.execute(
             "SELECT " + _COLUMNS + " FROM experts"
-            " ORDER BY expertise_score DESC LIMIT ?",
+            " ORDER BY expertise_score DESC, followers DESC, login ASC"
+            " LIMIT ?",
             (n,),
         )
         out = []
