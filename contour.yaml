@@ -119,6 +119,66 @@ System:
               when: collect_profiles is awaited
               then: entry 2 is None and the other 4 entries are parsed pairs
               ref: Tolerant Parser
+            - given: >
+                the 5 search logins and a fake async fetch_json that, for
+                /users/<login>, returns a copy of user_torvalds.json with login
+                set to that login and followers set to its index 0..4 (repos:
+                repos_torvalds.json), awaiting asyncio.sleep(0.01 * (5 - index))
+                first so that later logins finish earlier
+              when: collect_profiles(logins, fetch_json, concurrency=5) and concurrency=2 are awaited
+              then: >
+                profile logins and stats logins equal the input logins and
+                followers are [0, 1, 2, 3, 4] in both runs; the test is red on
+                a collectors.py that returns results in completion order or
+                reversed
+    - name: github_client
+      description: The only module that talks to the network (v2).
+      functions:
+        - name: GitHub Client
+          description: >
+            GitHubClient(token=None, transport=None, sleep=None, clock=None,
+            max_pages=10).fetch_json(path) is the live fetch_json for
+            collect_profiles: token from GITHUB_TOKEN, rate-limit waits via
+            seconds_to_wait, list responses followed across Link rel="next".
+          behavior: >
+            See docs/TASK_MEGATRON_V2.md section 2.3 for the exact behaviour,
+            headers and the Transport contract
+            transport(url, headers) -> (status, headers, body_bytes); the
+            default transport is urllib_transport (urllib.request).
+          requirements: [Stdlib Only, Offline Tests, Real Fixtures]
+          guardrails: [No Network In Core]
+          steps:
+            - calls: Parse Rate Limit
+            - reads: GitHub Repos JSON
+            - produces: GitHub Repos JSON
+          examples:
+            - given: tests/fixtures/repos_torvalds_page{1,2,3}.json with their .headers.txt
+              when: fetch_json("/users/torvalds/repos?per_page=5") over a fake transport
+              then: 12 items from 3 requests; parse_repo_stats total_stars 262425
+            - given: rate_limit_headers.txt with x-ratelimit-remaining "0", clock 1790594766
+              when: fetch_json is awaited twice
+              then: the second call sleeps exactly 120 seconds before its request
+    - name: cli
+      description: python -m megatron harvest <login>... (v2).
+      functions:
+        - name: Harvest
+          description: >
+            harvest(logins, fetch_json, db_path, concurrency=10) runs
+            collect_profiles -> score_expertise -> save_experts and returns
+            {"requested", "saved", "failed"}; main(argv=None, fetch_json=None)
+            is the CLI, building GitHubClient() when no fetcher is given.
+          requirements: [Stdlib Only, Offline Tests]
+          steps:
+            - calls: Collect Profiles
+            - calls: Score Expertise
+            - calls: Store Experts
+          examples:
+            - given: fake fetch_json for torvalds and minnow (copy of user_torvalds.json, login minnow, followers 7, repos [])
+              when: harvest(["torvalds", "minnow"], fake, db) is awaited
+              then: saved 2, top_experts scores [850302, 7]
+            - given: a real GitHubClient over a fake transport serving the 3 repos pages
+              when: main(["harvest", "torvalds", "--db", db], fetch_json=client.fetch_json)
+              then: exit 0, total_stars 262425, expertise_score 850316
     - name: processors
       description: Expertise scoring over parsed profile data.
       functions:
@@ -254,5 +314,6 @@ Guardrail:
       None/0/skip, never to an exception that kills the batch.
   - name: No Network In Core
     description: >
-      No module under megatron/ imports urllib.request, http.client,
-      requests or socket in v1; the fetcher is injected.
+      Only megatron/github_client.py may import a network library, and only
+      urllib (v2). Every other module under megatron/ imports no urllib,
+      http, requests or socket; collect_profiles takes the fetcher injected.
