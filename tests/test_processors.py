@@ -29,15 +29,15 @@ class TestScoreExpertise(unittest.TestCase):
     maxDiff = None
 
     def test_example_1_torvalds_score_and_primary_language(self):
-        """Example 1: torvalds profile + stats -> score 850302, primary 'C'."""
+        """Example 1: torvalds profile + stats -> score 1635, primary 'C'."""
         record = score_expertise(TORVALDS_PROFILE, TORVALDS_STATS)
-        self.assertEqual(record["expertise_score"], 850302,
-                         msg="expertise_score must be followers + 2 * total_stars")
+        self.assertEqual(record["expertise_score"], 1635,
+                         msg="expertise_score must be round(100*log10(325466+1) + 200*log10(262418+1)) = 1635")
         self.assertEqual(record["primary_language"], "C",
                          msg="primary_language must be the language with the highest count")
 
     def test_example_2_empty_languages_gives_none_and_score_from_followers(self):
-        """Example 2: empty languages, total_stars 0, followers 7 -> 7, None."""
+        """Example 2: empty languages, total_stars 0, followers 7 -> 90, None."""
         profile = dict(TORVALDS_PROFILE)
         profile["followers"] = 7
         stats = {
@@ -48,8 +48,8 @@ class TestScoreExpertise(unittest.TestCase):
             "languages": {},
         }
         record = score_expertise(profile, stats)
-        self.assertEqual(record["expertise_score"], 7,
-                         msg="score must be 7 + 2 * 0 = 7")
+        self.assertEqual(record["expertise_score"], 90,
+                         msg="score must be round(100*log10(7+1) + 200*log10(0+1)) = 90")
         self.assertIsNone(record["primary_language"],
                           msg="primary_language must be None when languages is empty")
 
@@ -60,7 +60,7 @@ class TestScoreExpertise(unittest.TestCase):
         expected = dict(TORVALDS_PROFILE)
         expected["total_stars"] = 262418
         expected["languages"] = {"C": 8, "OpenSCAD": 1}
-        expected["expertise_score"] = 850302
+        expected["expertise_score"] = 1635
         expected["primary_language"] = "C"
         self.assertEqual(record, expected,
                          msg="record must be the profile keys plus the four scoring fields")
