@@ -1,0 +1,172 @@
+{
+  "deck_id": "20260928-160220-78b31afb",
+  "completed_at": "2026-09-28T16:07:18.972",
+  "branch": "morph/20260928-160220-78b31afb",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "cli-v6"
+    ],
+    [
+      "resilience-judge"
+    ]
+  ],
+  "batch_ids": [
+    "local-62136e62f6f241429a381f9e7bd4ba44",
+    "local-71d4755eee574db3b7a0ff6c4b83f2c9"
+  ],
+  "outcomes": {
+    "cli-v6": {
+      "custom_id": "cli-v6",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/cli.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_cli_resilience.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "cli-v6.v2",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "12e058b6149cdcd31f55ad85f70c8495dd8591e4",
+      "diffstat": [
+        {
+          "path": "megatron/cli.py",
+          "insertions": 55,
+          "deletions": 10
+        },
+        {
+          "path": "tests/test_cli_resilience.py",
+          "insertions": 322,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/cli.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/cli.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_cli_resilience.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_cli_resilience.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "resilience-judge": {
+      "custom_id": "resilience-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_resilience_examples.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_resilience_examples.resilience-judge.v2.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "resilience-judge.v2",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "8de192bd8fb847f0268cd32b50b553a6bfc3a5aa",
+      "diffstat": [
+        {
+          "path": "tests/test_resilience_examples.py",
+          "insertions": 331,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_resilience_examples.resilience-judge.v2.py",
+          "insertions": 331,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_resilience_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_resilience_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "cli-v6.v1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607740-KDEIx7WnT2Ep60fHsNWj",
+      "input_tokens": 12059,
+      "output_tokens": 6379,
+      "cost": 0.0042224855,
+      "finish_reason": "stop"
+    },
+    "cli-v6.v2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607740-3NVr9jKMr0ps3RllYbIF",
+      "input_tokens": 12059,
+      "output_tokens": 10828,
+      "cost": 0.0061394225,
+      "finish_reason": "stop"
+    },
+    "resilience-judge.v1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607933-jGIOHgOQhZtCCAze4kqi",
+      "input_tokens": 8804,
+      "output_tokens": 4431,
+      "cost": 0.002111349,
+      "finish_reason": "stop"
+    },
+    "resilience-judge.v2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790607933-j1w7Q9SLiB0N0IfoUywE",
+      "input_tokens": 8804,
+      "output_tokens": 5334,
+      "cost": 0.00338946,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 41726,
+    "output_tokens": 26972,
+    "cost": 0.015862717,
+    "requests": 4,
+    "requests_with_usage": 4
+  },
+  "orchestrator_usage": {}
+}
