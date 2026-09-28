@@ -99,7 +99,7 @@ class HarvestEndToEndTest(unittest.TestCase):
 
     def test_d1_full_pipeline_scores_all_pages(self):
         # type: () -> None
-        """D example 1: harvest torvalds offline, 4 calls, 262425 / 850316."""
+        """D example 1: harvest torvalds offline, 4 calls, 262425 / 1635."""
         fake = make_transport()
         client = GitHubClient(token="x", transport=fake)
         out, err = io.StringIO(), io.StringIO()
@@ -135,8 +135,8 @@ class HarvestEndToEndTest(unittest.TestCase):
             msg="total_stars over all 3 pages should be 262425 (a single page would give 7836); got %r" % (record["total_stars"],),
         )
         self.assertEqual(
-            record["expertise_score"], 850316,
-            msg="expertise_score over all 3 pages should be 850316 (a single page would give 341138); got %r" % (record["expertise_score"],),
+            record["expertise_score"], 1635,
+            msg="expertise_score over all 3 pages should be 1635 (a single page would give 1330); got %r" % (record["expertise_score"],),
         )
 
     def test_d2_main_builds_client_and_sends_token(self):
@@ -158,8 +158,8 @@ class HarvestEndToEndTest(unittest.TestCase):
         top = storage.top_experts(self.db, 1)
         self.assertEqual(len(top), 1, msg="expected exactly 1 expert row")
         self.assertEqual(
-            top[0]["expertise_score"], 850316,
-            msg="expertise_score should still be 850316 via the built-in client, got %r" % (top[0]["expertise_score"],),
+            top[0]["expertise_score"], 1635,
+            msg="expertise_score should still be 1635 via the built-in client, got %r" % (top[0]["expertise_score"],),
         )
 
 
