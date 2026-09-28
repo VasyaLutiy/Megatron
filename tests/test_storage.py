@@ -33,12 +33,12 @@ class TestSaveExpertsUpsert(unittest.TestCase):
     maxDiff = None
 
     def test_example_1_save_twice_is_one_row(self):
-        """Example 1: torvalds record (score 850302) saved twice into a
+        """Example 1: torvalds record (score 1635) saved twice into a
         fresh temp db; the experts table has exactly 1 row."""
         rec = _torvalds_record()
         self.assertEqual(
-            rec["expertise_score"], 850302,
-            msg="fixture-derived torvalds score must be 850302")
+            rec["expertise_score"], 1635,
+            msg="fixture-derived torvalds score must be 1635")
         with tempfile.TemporaryDirectory() as tmp:
             db_path = os.path.join(tmp, "experts.db")
             self.assertEqual(
@@ -79,8 +79,8 @@ class TestTopExperts(unittest.TestCase):
     maxDiff = None
 
     def test_example_2_top_experts_orders_and_decodes(self):
-        """Example 2: torvalds (850302) plus minnow (100); top_experts(db, 1)
-        returns one record, login torvalds, score 850302, languages
+        """Example 2: torvalds (1635) plus minnow (100); top_experts(db, 1)
+        returns one record, login torvalds, score 1635, languages
         {"C": 8, "OpenSCAD": 1}."""
         rec = _torvalds_record()
         minnow = dict(rec)
@@ -96,8 +96,8 @@ class TestTopExperts(unittest.TestCase):
                 top[0]["login"], "torvalds",
                 msg="the top record is torvalds, not minnow")
             self.assertEqual(
-                top[0]["expertise_score"], 850302,
-                msg="top record expertise_score must be 850302")
+                top[0]["expertise_score"], 1635,
+                msg="top record expertise_score must be 1635")
             self.assertEqual(
                 top[0]["languages"], {"C": 8, "OpenSCAD": 1},
                 msg="languages must be decoded back to a dict")
@@ -111,7 +111,7 @@ class TestTopExperts(unittest.TestCase):
             r["login"] = "user_%02d" % i
             r["expertise_score"] = i * 10
             records.append(r)
-        records.append(rec)  # score 850302, must come first
+        records.append(rec)  # score 1635, must come first
         with tempfile.TemporaryDirectory() as tmp:
             db_path = os.path.join(tmp, "experts.db")
             save_experts(db_path, records)
