@@ -1,0 +1,94 @@
+[
+ {
+  "custom_id": "client",
+  "intent": "patch",
+  "targets": [
+   "megatron/github_client.py",
+   "tests/test_github_client.py"
+  ],
+  "context_slice": [
+   "docs/TASK_MEGATRON_V2.md",
+   "megatron/api_manager.py",
+   "megatron/parsers.py",
+   "tests/fixtures/repos_torvalds_page1.headers.txt",
+   "tests/fixtures/repos_torvalds_page2.headers.txt",
+   "tests/fixtures/repos_torvalds_page3.headers.txt",
+   "tests/fixtures/rate_limit_headers.txt",
+   "tests/fixtures/user_torvalds.json"
+  ],
+  "acceptance": "D=/tmp/morph/client; mkdir -p $D; S=$(date +%s)\ncp megatron/github_client.py $D/0-$S.py 2>/dev/null\ncp tests/test_github_client.py $D/1-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/github_client.py tests/test_github_client.py\n venv/bin/python -m pytest tests/test_github_client.py -q --tb=short\n if grep -nE \"(import|from) +(requests|aiohttp|httpx|socket|http)\" megatron/github_client.py; then echo \"GUARD FAILED: github_client.py may use urllib only\"; exit 1; fi\n grep -qE \"(import|from) +urllib\" megatron/github_client.py || { echo \"GUARD FAILED: github_client.py does not import urllib\"; exit 1; }\n venv/bin/python -m pytest tests -q --tb=short\n bad=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | grep -vx megatron/github_client.py || true)\n if [ -n \"$bad\" ]; then echo \"GUARD FAILED: network import outside github_client.py: $bad\"; exit 1; fi\n if grep -n \"urlopen\" tests/*.py; then echo \"GUARD FAILED: a test calls urlopen\"; exit 1; fi\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+  "instruction": "Read docs/TASK_MEGATRON_V2.md FIRST (in your context): sections 2.1-2.3 are the contract, section 3 lists the examples your tests must prove. Every name you need is there or below; do not invent names, keys or files. Python 3.9-compatible syntax (typing.List/Dict/Optional/Tuple; no `match`, no `X | Y`), standard library only. Tests are unittest, `maxDiff = None` in every TestCase, `msg=` on every assertion, one test per numbered example, each test's docstring names the example (e.g. `A example 2`). Fixtures are loaded from `os.path.join(os.path.dirname(os.path.abspath(__file__)), \"fixtures\")`; never modify them. No test opens a network connection: no urlopen, no sockets.\n\nA `.headers.txt` fixture is parsed in the test as: skip the first line (status line), strip each line, skip empty lines, split each remaining line at the first \": \" into name and value. rate_limit_headers.txt has CRLF endings; the page headers files have LF.\n\n## GitHub Client\n\nWrite `megatron/github_client.py`: the ONLY module of the package that talks to the network, stdlib urllib only. It provides API_ROOT, parse_next_link(link_header), urllib_transport(url, headers), class GitHubError(Exception) with .status, and class GitHubClient(token=None, transport=None, sleep=None, clock=None, max_pages=10) with attributes token, transport, rate_limit and `async def fetch_json(self, path)`, exactly as spec section 2.3 describes (headers sent, GITHUB_TOKEN read at construction, the default transport looked up from the module global `urllib_transport` at construction, seconds_to_wait(self.rate_limit, int(clock())) before EVERY request including each page with `await sleep(wait)` when wait > 0, the transport run via loop.run_in_executor, parse_rate_limit after every response replacing self.rate_limit when not None, status >= 400 raises GitHubError, a list body followed along Link rel=\"next\" (case-insensitive header lookup) until no next or max_pages pages, pages concatenated in order; a dict body returned as is). Import parse_rate_limit and seconds_to_wait from megatron.api_manager; do not reimplement them. urllib_transport returns (status, dict(headers), body_bytes) and returns an HTTPError as (e.code, dict(e.headers), e.read()) instead of raising.\n\nWrite `tests/test_github_client.py` proving spec section 3 examples A.1-A.8, with a fake transport: a plain function that records (url, headers) of each call and serves (200, headers_dict, body_bytes) from a dict keyed by the full URL; body bytes are the fixture file read in binary. For A.2, page 1 is served at `https://api.github.com/users/torvalds/repos?per_page=5` and pages 2 and 3 at the exact URLs in the `link` headers of pages 1 and 2 (`https://api.github.com/user/1024025/repos?per_page=5&page=2` and `...&page=3`). Expected: 12 items, 3 calls in that order, parse_repo_stats(\"torvalds\", result) gives repo_count 12, non_fork_count 9, total_stars 262425. For A.4 use unittest.mock.patch.dict(os.environ, ...) (clear=True where GITHUB_TOKEN must be absent). For A.5 the fake sleep is `async def` appending its argument to a list; the clock is `lambda: 1790594766`; the served headers are rate_limit_headers.txt with x-ratelimit-remaining set to \"0\" (reset 1790594886, so the wait is 120). Run coroutines with asyncio.run. Never call urllib_transport.",
+  "max_tokens": 16000,
+  "reasoning_max_tokens": 2500,
+  "variants": 1,
+  "depends_on": []
+ },
+ {
+  "custom_id": "cli",
+  "intent": "patch",
+  "targets": [
+   "megatron/cli.py",
+   "megatron/__main__.py",
+   "tests/test_cli.py"
+  ],
+  "context_slice": [
+   "docs/TASK_MEGATRON_V2.md",
+   "megatron/collectors.py",
+   "megatron/processors.py",
+   "megatron/storage.py",
+   "tests/fixtures/user_torvalds.json"
+  ],
+  "acceptance": "D=/tmp/morph/cli; mkdir -p $D; S=$(date +%s)\ncp megatron/cli.py $D/0-$S.py 2>/dev/null\ncp megatron/__main__.py $D/1-$S.py 2>/dev/null\ncp tests/test_cli.py $D/2-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/cli.py megatron/__main__.py tests/test_cli.py\n venv/bin/python -m pytest tests/test_cli.py -q --tb=short\n venv/bin/python -m megatron harvest --help > /dev/null\n venv/bin/python -m pytest tests -q --tb=short\n bad=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | grep -vx megatron/github_client.py || true)\n if [ -n \"$bad\" ]; then echo \"GUARD FAILED: network import outside github_client.py: $bad\"; exit 1; fi\n if grep -n \"urlopen\" tests/*.py; then echo \"GUARD FAILED: a test calls urlopen\"; exit 1; fi\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+  "instruction": "Read docs/TASK_MEGATRON_V2.md FIRST (in your context): sections 2.1-2.3 are the contract, section 3 lists the examples your tests must prove. Every name you need is there or below; do not invent names, keys or files. Python 3.9-compatible syntax (typing.List/Dict/Optional/Tuple; no `match`, no `X | Y`), standard library only. Tests are unittest, `maxDiff = None` in every TestCase, `msg=` on every assertion, one test per numbered example, each test's docstring names the example (e.g. `A example 2`). Fixtures are loaded from `os.path.join(os.path.dirname(os.path.abspath(__file__)), \"fixtures\")`; never modify them. No test opens a network connection: no urlopen, no sockets.\n\nA `.headers.txt` fixture is parsed in the test as: skip the first line (status line), strip each line, skip empty lines, split each remaining line at the first \": \" into name and value. rate_limit_headers.txt has CRLF endings; the page headers files have LF.\n\n## Harvest CLI\n\nWrite `megatron/cli.py` with `async def harvest(logins, fetch_json, db_path, concurrency=10)` and `def main(argv=None, fetch_json=None) -> int`, and `megatron/__main__.py` that only does `import sys; from megatron.cli import main; sys.exit(main())` under `if __name__ == \"__main__\":`. harvest awaits collectors.collect_profiles(logins, fetch_json, concurrency), calls processors.score_expertise(pair[\"profile\"], pair[\"stats\"]) for every non-None pair, saves the records with storage.save_experts(db_path, records), and returns {\"requested\": len(logins), \"saved\": <records written>, \"failed\": [logins whose pair is None, input order]}. main parses argv with argparse (prog \"megatron\", subcommand `harvest`, positional `logins` nargs=\"+\", `--db` default \"experts.db\", `--concurrency` int default 10). When fetch_json is None, main imports GitHubClient INSIDE the function (`from megatron.github_client import GitHubClient`; that module is written by another card in parallel, so never import it at module level) and uses GitHubClient().fetch_json. main runs harvest with asyncio.run, prints `saved <n> of <m> -> <db>` to stdout and `failed: <login>` to stderr per failure, returns 0 when all saved, 1 otherwise. cli.py imports no network library.\n\nWrite `tests/test_cli.py` proving spec section 3 examples B.1-B.4. The fake fetch_json is `async def` serving: `/users/torvalds` -> parsed user_torvalds.json, `/users/torvalds/repos?per_page=100` -> parsed repos_torvalds.json, `/users/minnow` -> a copy of user_torvalds.json with login \"minnow\" and followers 7, `/users/minnow/repos?per_page=100` -> []; the failing variant raises ValueError for any path containing \"minnow\". Expected: top_experts(db, 2) logins [\"torvalds\", \"minnow\"], expertise_score [850302, 7]. Use a tempfile.TemporaryDirectory for the db. Capture stdout/stderr with contextlib.redirect_stdout/redirect_stderr and io.StringIO. B.4 runs subprocess.run([sys.executable, \"-m\", \"megatron\", \"harvest\", \"--help\"], cwd=<repo root = parent of the tests directory>, capture_output=True) and expects returncode 0. Always pass fetch_json to main in tests.",
+  "max_tokens": 16000,
+  "reasoning_max_tokens": 2500,
+  "variants": 1,
+  "depends_on": []
+ },
+ {
+  "custom_id": "order",
+  "intent": "patch",
+  "targets": [
+   "tests/test_collect_order.py"
+  ],
+  "context_slice": [
+   "docs/TASK_MEGATRON_V2.md",
+   "megatron/collectors.py",
+   "megatron/parsers.py",
+   "tests/fixtures/user_torvalds.json",
+   "tests/fixtures/search_users_python.json"
+  ],
+  "acceptance": "D=/tmp/morph/order; mkdir -p $D; S=$(date +%s)\ncp tests/test_collect_order.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_collect_order.py\n venv/bin/python -m pytest tests/test_collect_order.py -q --tb=short\n R=$PWD\n for m in 's/return list(await asyncio.gather(\\*tasks))/return [await f for f in asyncio.as_completed(tasks)]/' 's/return list(await asyncio.gather(\\*tasks))/return list(reversed(await asyncio.gather(*tasks)))/'; do\n  T=$(mktemp -d); cp -r megatron tests $T/; sed -i \"$m\" $T/megatron/collectors.py\n  if cmp -s megatron/collectors.py $T/megatron/collectors.py; then echo \"MUTANT NOT APPLIED: $m\"; exit 1; fi\n  if (cd $T && $R/venv/bin/python -m pytest tests/test_collect_order.py -q --tb=no -p no:cacheprovider); then echo \"MUTANT SURVIVED: $m -- tests/test_collect_order.py passes on a collectors.py that breaks input order; make each login's data distinct and its completion order differ from input order\"; exit 1; fi\n  echo \"mutant killed: $m\"\n done\n venv/bin/python -m pytest tests -q --tb=short\n bad=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | grep -vx megatron/github_client.py || true)\n if [ -n \"$bad\" ]; then echo \"GUARD FAILED: network import outside github_client.py: $bad\"; exit 1; fi\n if grep -n \"urlopen\" tests/*.py; then echo \"GUARD FAILED: a test calls urlopen\"; exit 1; fi\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+  "instruction": "Read docs/TASK_MEGATRON_V2.md FIRST (in your context): sections 2.1-2.3 are the contract, section 3 lists the examples your tests must prove. Every name you need is there or below; do not invent names, keys or files. Python 3.9-compatible syntax (typing.List/Dict/Optional/Tuple; no `match`, no `X | Y`), standard library only. Tests are unittest, `maxDiff = None` in every TestCase, `msg=` on every assertion, one test per numbered example, each test's docstring names the example (e.g. `A example 2`). Fixtures are loaded from `os.path.join(os.path.dirname(os.path.abspath(__file__)), \"fixtures\")`; never modify them. No test opens a network connection: no urlopen, no sockets.\n\nA `.headers.txt` fixture is parsed in the test as: skip the first line (status line), strip each line, skip empty lines, split each remaining line at the first \": \" into name and value. rate_limit_headers.txt has CRLF endings; the page headers files have LF.\n\n## Collect Profiles keeps input order (verification blind spot)\n\nWrite ONLY `tests/test_collect_order.py`. Do not write or modify `megatron/collectors.py` -- the author of the criterion is not the author of the code. Why: every v1 test feeds the SAME fixture to every login, so a collect_profiles that permutes its results is invisible; a mutant returning `list(reversed(...))` passes all 40 v1 tests. Your test must make order observable. Prove spec section 3 examples C.1 and C.2. logins = the 5 `login` values of tests/fixtures/search_users_python.json `items`, in file order (karpathy, openai, google, huggingface, rafaballerini). The fake `async def fetch_json(path)`: find the login and its index i in logins; first `await asyncio.sleep(0.01 * (5 - i))` so later logins finish EARLIER; for `/users/<login>` return a deep copy of parsed user_torvalds.json with \"login\" set to the login and \"followers\" set to i; for `/users/<login>/repos?per_page=100` return parsed tests/fixtures/repos_torvalds.json. C.1: asyncio.run(collectors.collect_profiles(logins, fetch_json, concurrency=5)) -> [p[\"profile\"][\"login\"] for p in result] == logins, [p[\"profile\"][\"followers\"] ...] == [0, 1, 2, 3, 4], [p[\"stats\"][\"login\"] ...] == logins. C.2: the same with concurrency=2. Import as `from megatron import collectors` and call `collectors.collect_profiles` at call time. The acceptance runs your test against two mutants of collectors.py (completion order via asyncio.as_completed, and reversed) and requires it to FAIL on both.",
+  "max_tokens": 12000,
+  "reasoning_max_tokens": 2500,
+  "variants": 1,
+  "depends_on": []
+ },
+ {
+  "custom_id": "e2e",
+  "intent": "patch",
+  "targets": [
+   "tests/test_harvest_e2e.py"
+  ],
+  "context_slice": [
+   "docs/TASK_MEGATRON_V2.md",
+   "megatron/github_client.py",
+   "megatron/cli.py",
+   "megatron/storage.py",
+   "tests/fixtures/repos_torvalds_page1.headers.txt",
+   "tests/fixtures/repos_torvalds_page2.headers.txt",
+   "tests/fixtures/repos_torvalds_page3.headers.txt",
+   "tests/fixtures/rate_limit_headers.txt"
+  ],
+  "acceptance": "D=/tmp/morph/e2e; mkdir -p $D; S=$(date +%s)\ncp tests/test_harvest_e2e.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_harvest_e2e.py\n venv/bin/python -m pytest tests/test_harvest_e2e.py -q --tb=short\n venv/bin/python -m pytest tests/test_github_client.py tests/test_cli.py -q --tb=short\n if grep -nE \"(import|from) +(requests|aiohttp|httpx|socket|http)\" megatron/github_client.py; then echo \"GUARD FAILED: github_client.py may use urllib only\"; exit 1; fi\n grep -qE \"(import|from) +urllib\" megatron/github_client.py || { echo \"GUARD FAILED: github_client.py does not import urllib\"; exit 1; }\n venv/bin/python -m pytest tests -q --tb=short\n bad=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | grep -vx megatron/github_client.py || true)\n if [ -n \"$bad\" ]; then echo \"GUARD FAILED: network import outside github_client.py: $bad\"; exit 1; fi\n if grep -n \"urlopen\" tests/*.py; then echo \"GUARD FAILED: a test calls urlopen\"; exit 1; fi\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+  "instruction": "Read docs/TASK_MEGATRON_V2.md FIRST (in your context): sections 2.1-2.3 are the contract, section 3 lists the examples your tests must prove. Every name you need is there or below; do not invent names, keys or files. Python 3.9-compatible syntax (typing.List/Dict/Optional/Tuple; no `match`, no `X | Y`), standard library only. Tests are unittest, `maxDiff = None` in every TestCase, `msg=` on every assertion, one test per numbered example, each test's docstring names the example (e.g. `A example 2`). Fixtures are loaded from `os.path.join(os.path.dirname(os.path.abspath(__file__)), \"fixtures\")`; never modify them. No test opens a network connection: no urlopen, no sockets.\n\nA `.headers.txt` fixture is parsed in the test as: skip the first line (status line), strip each line, skip empty lines, split each remaining line at the first \": \" into name and value. rate_limit_headers.txt has CRLF endings; the page headers files have LF.\n\n## End to end: GitHubClient + harvest, offline\n\nWrite ONLY `tests/test_harvest_e2e.py`. Do not write or modify any file under megatron/ -- you are the independent author of the criterion for github_client.py and cli.py. Prove spec section 3 examples D.1 and D.2. The fake transport is a plain function `transport(url, headers)` that records (url, headers) and serves (200, headers_dict, body_bytes) from a dict keyed by full URL: `https://api.github.com/users/torvalds` -> bytes of tests/fixtures/user_torvalds.json with the headers of rate_limit_headers.txt; `https://api.github.com/users/torvalds/repos?per_page=100` -> bytes of repos_torvalds_page1.json with the headers of repos_torvalds_page1.headers.txt; `https://api.github.com/user/1024025/repos?per_page=5&page=2` -> page 2 body + headers; `https://api.github.com/user/1024025/repos?per_page=5&page=3` -> page 3 body + headers. An unknown URL raises AssertionError naming it. D.1: main([\"harvest\", \"torvalds\", \"--db\", db], fetch_json=GitHubClient(token=\"x\", transport=fake).fetch_json) returns 0; storage.top_experts(db, 1)[0] has total_stars 262425 and expertise_score 850316 (msg must say a single page would give 7836 / 341138); the transport was called exactly 4 times. D.2: with unittest.mock.patch(\"megatron.github_client.urllib_transport\", fake) and unittest.mock.patch.dict(os.environ, {\"GITHUB_TOKEN\": \"envtok\"}), main([\"harvest\", \"torvalds\", \"--db\", db]) with NO fetch_json returns 0 and every recorded call carried the header Authorization: Bearer envtok (look the header name up case-insensitively). Silence main's stdout/stderr with contextlib.redirect_stdout/redirect_stderr. Use tempfile.TemporaryDirectory for db files.",
+  "max_tokens": 12000,
+  "reasoning_max_tokens": 2500,
+  "variants": 1,
+  "depends_on": [
+   "client",
+   "cli"
+  ]
+ }
+]
