@@ -1,0 +1,428 @@
+{
+  "deck_id": "20260928-143742-4e753d5e",
+  "completed_at": "2026-09-28T14:39:28.198",
+  "branch": "morph/20260928-143742-4e753d5e",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "score-v5",
+      "store-examples-v5",
+      "upsert-v5"
+    ],
+    [
+      "score-judge-v5",
+      "cli-v5",
+      "e2e-v5",
+      "storage-v5"
+    ]
+  ],
+  "batch_ids": [
+    "local-00ee0ce5156a4ec39bb17d4097312a82",
+    "local-e444bcf6fcae4ff5a0b542feb95170b6",
+    "local-8ac9d98612c3480d802d215c45f3e213",
+    "local-2b228698b0004ce9ad6b92bd1964d5df"
+  ],
+  "outcomes": {
+    "score-v5": {
+      "custom_id": "score-v5",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/processors.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_processors.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "score-v5",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "3ca6ec39a4db5a462e0348ca1f07cc9da01cd6fc",
+      "diffstat": [
+        {
+          "path": "megatron/processors.py",
+          "insertions": 3,
+          "deletions": 2
+        },
+        {
+          "path": "tests/test_processors.py",
+          "insertions": 7,
+          "deletions": 7
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/processors.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/processors.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_processors.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_processors.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "store-examples-v5": {
+      "custom_id": "store-examples-v5",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_store_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "store-examples-v5",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "9f389f93a2c707c97a0b8b47a1d758dc4a1a7fd8",
+      "diffstat": [
+        {
+          "path": "tests/test_store_examples.py",
+          "insertions": 4,
+          "deletions": 4
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_store_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_store_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "upsert-v5": {
+      "custom_id": "upsert-v5",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_store_upsert.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "upsert-v5",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "c48134f7f2e54e1bbc9af25989998c6ac49b933c",
+      "diffstat": [
+        {
+          "path": "tests/test_store_upsert.py",
+          "insertions": 5,
+          "deletions": 5
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_store_upsert.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_store_upsert.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "e2e-v5": {
+      "custom_id": "e2e-v5",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_harvest_e2e.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "e2e-v5",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "a882514c390d8d1fe3cb5d500a81ff4cc4ba1dcc",
+      "diffstat": [
+        {
+          "path": "tests/test_harvest_e2e.py",
+          "insertions": 5,
+          "deletions": 5
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_harvest_e2e.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_harvest_e2e.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "cli-v5": {
+      "custom_id": "cli-v5",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_cli.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 2,
+      "winning_variant": "cli-v5.r1",
+      "acceptance_output": null,
+      "earlier_failures": "The previous answer was rejected before acceptance could run: a file it wrote is not valid source in its language.\n  - tests/test_cli.py: line 145: SyntaxError: invalid syntax (parse)\nAnswer again with the COMPLETE file(s) as valid source. The fenced block must hold only the code of that file -- no file path, no prose, no notes inside it -- and must not be cut off.",
+      "commit": "05fff6dc50fdca225303efb545be91065fc7f5e5",
+      "diffstat": [
+        {
+          "path": "tests/test_cli.py",
+          "insertions": 1,
+          "deletions": 1
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_cli.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_cli.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "storage-v5": {
+      "custom_id": "storage-v5",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_storage.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 2,
+      "winning_variant": "storage-v5.r1",
+      "acceptance_output": null,
+      "earlier_failures": "The previous answer was rejected before acceptance could run: a file it wrote is not valid source in its language.\n  - tests/test_storage.py: line 151: SyntaxError: invalid syntax (parse)\nAnswer again with the COMPLETE file(s) as valid source. The fenced block must hold only the code of that file -- no file path, no prose, no notes inside it -- and must not be cut off.",
+      "commit": "94b8ee0101d21c1f11340a9eeb109328ceae0dd4",
+      "diffstat": [
+        {
+          "path": "tests/test_storage.py",
+          "insertions": 8,
+          "deletions": 8
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_storage.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_storage.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "score-judge-v5": {
+      "custom_id": "score-judge-v5",
+      "status": "failed",
+      "paths": [],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 3,
+      "winning_variant": null,
+      "acceptance_output": "The previous answer was rejected before acceptance could run: a file it wrote is not valid source in its language.\n  - tests/test_score_examples.py: line 1: SyntaxError: invalid syntax (parse)\nAnswer again with the COMPLETE file(s) as valid source. The fenced block must hold only the code of that file -- no file path, no prose, no notes inside it -- and must not be cut off.",
+      "earlier_failures": null,
+      "commit": null,
+      "diffstat": null,
+      "syntax_gate": {
+        "passed": false,
+        "checks": [
+          {
+            "path": "tests/test_score_examples.py",
+            "level": "parse",
+            "status": "failed",
+            "line": 1,
+            "message": "SyntaxError: invalid syntax"
+          },
+          {
+            "path": "tests/test_score_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "not attempted: the file does not parse"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "store-examples-v5": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602662-COtxk9LSqRIY1Mt25Q6s",
+      "input_tokens": 5494,
+      "output_tokens": 684,
+      "cost": 0.000991185,
+      "finish_reason": "stop"
+    },
+    "upsert-v5": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602662-bMyPJKMUp7IXdIlpwPfr",
+      "input_tokens": 5556,
+      "output_tokens": 1174,
+      "cost": 0.00120734,
+      "finish_reason": "stop"
+    },
+    "score-v5": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602662-hNNW4b3KMwlO1s36IXIa",
+      "input_tokens": 6292,
+      "output_tokens": 1239,
+      "cost": 0.001328805,
+      "finish_reason": "stop"
+    },
+    "storage-v5": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602688-tXssJu6aKFF8ponQuQCH",
+      "input_tokens": 6267,
+      "output_tokens": 1362,
+      "cost": 0.0013778925,
+      "finish_reason": "stop"
+    },
+    "cli-v5": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602688-duHo1I1zuRfILeqOVRWR",
+      "input_tokens": 5908,
+      "output_tokens": 1197,
+      "cost": 0.001261995,
+      "finish_reason": "stop"
+    },
+    "score-judge-v5": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602688-ziN8vgstjdWwRMhPo36S",
+      "input_tokens": 6253,
+      "output_tokens": 1372,
+      "cost": 0.0013803575,
+      "finish_reason": "stop"
+    },
+    "e2e-v5": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602688-z0kd8W7DaWv0oEVMtLvQ",
+      "input_tokens": 6438,
+      "output_tokens": 1551,
+      "cost": 0.00148002,
+      "finish_reason": "stop"
+    },
+    "cli-v5.r1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602717-Ce4T2UfTYsloiHODW5uC",
+      "input_tokens": 6017,
+      "output_tokens": 1204,
+      "cost": 0.0012788675,
+      "finish_reason": "stop"
+    },
+    "storage-v5.r1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602717-7Hbvu1M41etISFpbfC6m",
+      "input_tokens": 6376,
+      "output_tokens": 1369,
+      "cost": 0.001394765,
+      "finish_reason": "stop"
+    },
+    "score-judge-v5.r1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602717-F2R30a98O2ljYqBQL8DA",
+      "input_tokens": 6363,
+      "output_tokens": 1346,
+      "cost": 0.0013833325,
+      "finish_reason": "stop"
+    },
+    "score-judge-v5.r2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790602743-R4bT1LNgwHoSQLVzibiy",
+      "input_tokens": 6363,
+      "output_tokens": 1345,
+      "cost": 0.0007562195,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 67327,
+    "output_tokens": 13843,
+    "cost": 0.013840779499999999,
+    "requests": 11,
+    "requests_with_usage": 11
+  },
+  "orchestrator_usage": {}
+}
