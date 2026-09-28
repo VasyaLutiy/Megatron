@@ -1,0 +1,123 @@
+[
+  {
+    "custom_id": "score-v5",
+    "intent": "patch",
+    "targets": [
+      "megatron/processors.py",
+      "tests/test_processors.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON_V5.md"
+    ],
+    "acceptance": "D=/tmp/morph/score-v5; mkdir -p $D; S=$(date +%s)\ncp megatron/processors.py $D/0-$S.py 2>/dev/null\ncp tests/test_processors.py $D/1-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/processors.py tests/test_processors.py\n venv/bin/python -m pytest tests/test_processors.py -q --tb=short\n venv/bin/python decks/v5_guard.py megatron/processors.py --quotes 4 --hashes 1 --tests 0 --lines 3,10,20 --max 60\n venv/bin/python decks/v5_guard.py tests/test_processors.py --quotes 12 --hashes 0 --tests 5 --lines 32,34,35,40,51,52,63 --max 60\n cat > $D/m1.py <<'EOF'\n_m_score = score_expertise\ndef score_expertise(profile, stats):\n    record = _m_score(profile, stats)\n    record[\"expertise_score\"] = profile.get(\"followers\", 0) + 2 * stats.get(\"total_stars\", 0)\n    return record\nEOF\n cat > $D/m2.py <<'EOF'\nimport math as _m_math\n_m_score2 = score_expertise\ndef score_expertise(profile, stats):\n    record = _m_score2(profile, stats)\n    record[\"expertise_score\"] = round(200 * _m_math.log10(profile.get(\"followers\", 0) + 1) + 100 * _m_math.log10(stats.get(\"total_stars\", 0) + 1))\n    return record\nEOF\n R=$PWD\n mut() { T=$(mktemp -d); cp -r megatron tests decks $T/\n  case \"$2\" in append:*) cat \"${2#append:}\" >> $T/$1;; *) sed -i \"$2\" $T/$1;; esac\n  if cmp -s $1 $T/$1; then echo \"MUTANT NOT APPLIED: $2\"; exit 1; fi\n  if (cd $T && $R/venv/bin/python -m pytest $3 -q --tb=no -p no:cacheprovider); then echo \"MUTANT SURVIVED: $2 -- $4\"; exit 1; fi\n  echo \"mutant killed: $2\"; }\n mut megatron/processors.py append:$D/m1.py \"tests/test_processors.py\" \"a processors.py that returns the old linear score passes; the test must assert the new value 1635/90\"\n mut megatron/processors.py append:$D/m2.py \"tests/test_processors.py\" \"a processors.py with the weights swapped (torvalds 1644, minnow 181) passes; the test must assert exactly 1635 and 90\"\n venv/bin/python -m pytest tests -q --tb=short --ignore=tests/test_score_examples.py --ignore=tests/test_cli.py --ignore=tests/test_harvest_e2e.py --ignore=tests/test_storage.py\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON_V5.md FIRST (in your context): section 2.3 is the new formula and its control values, section 2.5 lists the ONLY lines you may change. This is a PATCH of an existing file: return the whole file with only those lines changed. Preserve all existing docstrings and comments verbatim; on the listed lines change only the old number or formula, keep the surrounding words, quoting, indentation and line breaks. Do not add, remove, rename or reorder tests, imports, functions or blank lines (the one exception is stated below). Python 3.9-compatible syntax, standard library only. The acceptance counts triple quotes, comment lines and test methods, and fails if any removed line is not one of the listed line numbers.\n\nChange the scoring formula of `score_expertise` to `expertise_score = round(100*log10(followers+1) + 200*log10(total_stars+1))` and update its unit test to the new control values (torvalds 1635, followers 7 / stars 0 -> 90). primary_language logic unchanged.\n\n## Edits in `megatron/processors.py` (line numbers of the file as given)\n- line new line: add `import math` as a NEW line directly above `from typing import Any, Dict, Optional` (the only line you may add besides the replacements; keep the typing import line itself unchanged)\n- line 10: docstring: `expertise_score = followers + 2 * total_stars (integers).` becomes `expertise_score = round(100*log10(followers+1) + 200*log10(total_stars+1)).`\n- line 20: `score = round(100 * math.log10(profile.get(\"followers\", 0) + 1) + 200 * math.log10(total_stars + 1))` (built-in round returns an int)\n\n## Edits in `tests/test_processors.py` (line numbers of the file as given)\n- line 32: docstring `score 850302` -> `score 1635`\n- line 34: expected 850302 -> 1635\n- line 35: msg -> `\"expertise_score must be round(100*log10(325466+1) + 200*log10(262418+1)) = 1635\"`\n- line 40: docstring `-> 7, None.` -> `-> 90, None.`\n- line 51: expected 7 -> 90\n- line 52: msg -> `\"score must be round(100*log10(7+1) + 200*log10(0+1)) = 90\"`\n- line 63: `expected[\"expertise_score\"] = 1635`\n",
+    "max_tokens": 12000,
+    "reasoning_max_tokens": 2500,
+    "variants": 1,
+    "depends_on": []
+  },
+  {
+    "custom_id": "store-examples-v5",
+    "intent": "patch",
+    "targets": [
+      "tests/test_store_examples.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON_V5.md"
+    ],
+    "acceptance": "D=/tmp/morph/store-examples-v5; mkdir -p $D; S=$(date +%s)\ncp tests/test_store_examples.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_store_examples.py\n venv/bin/python -m pytest tests/test_store_examples.py -q --tb=short\n venv/bin/python decks/v5_guard.py tests/test_store_examples.py --quotes 10 --hashes 5 --tests 2 --lines 25,64,70,71 --max 60\n venv/bin/python -m pytest tests -q --tb=short --ignore=tests/test_score_examples.py --ignore=tests/test_cli.py --ignore=tests/test_harvest_e2e.py --ignore=tests/test_storage.py\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON_V5.md FIRST (in your context): section 2.3 is the new formula and its control values, section 2.5 lists the ONLY lines you may change. This is a PATCH of an existing file: return the whole file with only those lines changed. Preserve all existing docstrings and comments verbatim; on the listed lines change only the old number or formula, keep the surrounding words, quoting, indentation and line breaks. Do not add, remove, rename or reorder tests, imports, functions or blank lines (the one exception is stated below). Python 3.9-compatible syntax, standard library only. The acceptance counts triple quotes, comment lines and test methods, and fails if any removed line is not one of the listed line numbers.\n\nThis is the judge test of an earlier deck (card store-judge); it stores a hand-set Expert Record literal. Patch the literal torvalds score from the old formula (850302) to the new one (1635); nothing else. Storage behavior is unchanged.\n\n## Edits in `tests/test_store_examples.py` (line numbers of the file as given)\n- line 25: `\"expertise_score\": 850302,` -> `\"expertise_score\": 1635,`\n- line 64: docstring `torvalds (850302)` -> `torvalds (1635)`\n- line 70: expected 850302 -> 1635\n- line 71: msg `expertise_score is 850302` -> `expertise_score is 1635`\n",
+    "max_tokens": 12000,
+    "reasoning_max_tokens": 2500,
+    "variants": 1,
+    "depends_on": []
+  },
+  {
+    "custom_id": "upsert-v5",
+    "intent": "patch",
+    "targets": [
+      "tests/test_store_upsert.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON_V5.md"
+    ],
+    "acceptance": "D=/tmp/morph/upsert-v5; mkdir -p $D; S=$(date +%s)\ncp tests/test_store_upsert.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_store_upsert.py\n venv/bin/python -m pytest tests/test_store_upsert.py -q --tb=short\n venv/bin/python decks/v5_guard.py tests/test_store_upsert.py --quotes 8 --hashes 4 --tests 1 --lines 29,40,69,74,75 --max 60\n venv/bin/python -m pytest tests -q --tb=short --ignore=tests/test_score_examples.py --ignore=tests/test_cli.py --ignore=tests/test_harvest_e2e.py --ignore=tests/test_storage.py\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON_V5.md FIRST (in your context): section 2.3 is the new formula and its control values, section 2.5 lists the ONLY lines you may change. This is a PATCH of an existing file: return the whole file with only those lines changed. Preserve all existing docstrings and comments verbatim; on the listed lines change only the old number or formula, keep the surrounding words, quoting, indentation and line breaks. Do not add, remove, rename or reorder tests, imports, functions or blank lines (the one exception is stated below). Python 3.9-compatible syntax, standard library only. The acceptance counts triple quotes, comment lines and test methods, and fails if any removed line is not one of the listed line numbers.\n\nThis is the upsert test of an earlier deck (card upsert, v3); it stores two hand-set Expert Record literals A and B for login torvalds. Under the new formula both score 1635: A (followers 325466, total_stars 262418) and B (325474, 262428). Patch only the score literals and the messages naming them; followers/total_stars values stay.\n\n## Edits in `tests/test_store_upsert.py` (line numbers of the file as given)\n- line 29: A: `\"expertise_score\": 850302,` -> `\"expertise_score\": 1635,`\n- line 40: B: `rec[\"expertise_score\"] = 850330` -> `rec[\"expertise_score\"] = 1635`\n- line 69: msg part `\"expertise_score 850330\")` -> `\"expertise_score 1635\")`\n- line 74: expected 850330 -> 1635\n- line 75: msg `expertise_score updated to 850330` -> `expertise_score of B is 1635`\n",
+    "max_tokens": 12000,
+    "reasoning_max_tokens": 2500,
+    "variants": 1,
+    "depends_on": []
+  },
+  {
+    "custom_id": "score-judge-v5",
+    "intent": "patch",
+    "targets": [
+      "tests/test_score_examples.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON_V5.md"
+    ],
+    "acceptance": "D=/tmp/morph/score-judge-v5; mkdir -p $D; S=$(date +%s)\ncp tests/test_score_examples.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_score_examples.py\n venv/bin/python -m pytest tests/test_score_examples.py -q --tb=short\n venv/bin/python decks/v5_guard.py tests/test_score_examples.py --quotes 12 --hashes 3 --tests 3 --lines 71,81,82,102,111,119,120 --max 60\n cat > $D/m1.py <<'EOF'\n_m_score = score_expertise\ndef score_expertise(profile, stats):\n    record = _m_score(profile, stats)\n    record[\"expertise_score\"] = profile.get(\"followers\", 0) + 2 * stats.get(\"total_stars\", 0)\n    return record\nEOF\n cat > $D/m2.py <<'EOF'\nimport math as _m_math\n_m_score2 = score_expertise\ndef score_expertise(profile, stats):\n    record = _m_score2(profile, stats)\n    record[\"expertise_score\"] = round(200 * _m_math.log10(profile.get(\"followers\", 0) + 1) + 100 * _m_math.log10(stats.get(\"total_stars\", 0) + 1))\n    return record\nEOF\n R=$PWD\n mut() { T=$(mktemp -d); cp -r megatron tests decks $T/\n  case \"$2\" in append:*) cat \"${2#append:}\" >> $T/$1;; *) sed -i \"$2\" $T/$1;; esac\n  if cmp -s $1 $T/$1; then echo \"MUTANT NOT APPLIED: $2\"; exit 1; fi\n  if (cd $T && $R/venv/bin/python -m pytest $3 -q --tb=no -p no:cacheprovider); then echo \"MUTANT SURVIVED: $2 -- $4\"; exit 1; fi\n  echo \"mutant killed: $2\"; }\n mut megatron/processors.py append:$D/m1.py \"tests/test_score_examples.py\" \"a processors.py that returns the old linear score passes; the test must assert the new value 1635/90\"\n mut megatron/processors.py append:$D/m2.py \"tests/test_score_examples.py\" \"a processors.py with the weights swapped (torvalds 1644, minnow 181) passes; the test must assert exactly 1635 and 90\"\n venv/bin/python -m pytest tests -q --tb=short --ignore=tests/test_cli.py --ignore=tests/test_harvest_e2e.py --ignore=tests/test_storage.py\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON_V5.md FIRST (in your context): section 2.3 is the new formula and its control values, section 2.5 lists the ONLY lines you may change. This is a PATCH of an existing file: return the whole file with only those lines changed. Preserve all existing docstrings and comments verbatim; on the listed lines change only the old number or formula, keep the surrounding words, quoting, indentation and line breaks. Do not add, remove, rename or reorder tests, imports, functions or blank lines (the one exception is stated below). Python 3.9-compatible syntax, standard library only. The acceptance counts triple quotes, comment lines and test methods, and fails if any removed line is not one of the listed line numbers.\n\nThis is the judge test of an earlier deck (card score-judge). megatron/processors.py now implements `expertise_score = round(100*log10(followers+1) + 200*log10(total_stars+1))` (done by a previous card). Patch the expected values to the new control values: torvalds fixtures -> 1635, followers 7 / stars 0 -> 90. Values are still read from the fixtures as today.\n\n## Edits in `tests/test_score_examples.py` (line numbers of the file as given)\n- line 71: docstring `expertise_score 850302,` -> `expertise_score 1635,`\n- line 81: expected 850302 -> 1635\n- line 82: msg -> `\"expertise_score must be round(100*log10(325466+1) + 200*log10(262418+1)) = 1635\"`\n- line 102: `(\"expertise_score\", 850302),` -> `(\"expertise_score\", 1635),`\n- line 111: docstring `-> expertise_score 7,` -> `-> expertise_score 90,`\n- line 119: expected 7 -> 90\n- line 120: msg -> `\"expertise_score must be round(100*log10(7+1) + 200*log10(0+1)) = 90\"`\n",
+    "max_tokens": 12000,
+    "reasoning_max_tokens": 2500,
+    "variants": 1,
+    "depends_on": [
+      "score-v5"
+    ]
+  },
+  {
+    "custom_id": "cli-v5",
+    "intent": "patch",
+    "targets": [
+      "tests/test_cli.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON_V5.md"
+    ],
+    "acceptance": "D=/tmp/morph/cli-v5; mkdir -p $D; S=$(date +%s)\ncp tests/test_cli.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_cli.py\n venv/bin/python -m pytest tests/test_cli.py -q --tb=short\n venv/bin/python decks/v5_guard.py tests/test_cli.py --quotes 10 --hashes 8 --tests 4 --lines 85 --max 60\n cat > $D/m1.py <<'EOF'\n_m_score = score_expertise\ndef score_expertise(profile, stats):\n    record = _m_score(profile, stats)\n    record[\"expertise_score\"] = profile.get(\"followers\", 0) + 2 * stats.get(\"total_stars\", 0)\n    return record\nEOF\n R=$PWD\n mut() { T=$(mktemp -d); cp -r megatron tests decks $T/\n  case \"$2\" in append:*) cat \"${2#append:}\" >> $T/$1;; *) sed -i \"$2\" $T/$1;; esac\n  if cmp -s $1 $T/$1; then echo \"MUTANT NOT APPLIED: $2\"; exit 1; fi\n  if (cd $T && $R/venv/bin/python -m pytest $3 -q --tb=no -p no:cacheprovider); then echo \"MUTANT SURVIVED: $2 -- $4\"; exit 1; fi\n  echo \"mutant killed: $2\"; }\n mut megatron/processors.py append:$D/m1.py \"tests/test_cli.py\" \"a processors.py that returns the old linear score passes; the test must assert the new value 1635/90\"\n venv/bin/python -m pytest tests -q --tb=short --ignore=tests/test_score_examples.py --ignore=tests/test_harvest_e2e.py --ignore=tests/test_storage.py\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON_V5.md FIRST (in your context): section 2.3 is the new formula and its control values, section 2.5 lists the ONLY lines you may change. This is a PATCH of an existing file: return the whole file with only those lines changed. Preserve all existing docstrings and comments verbatim; on the listed lines change only the old number or formula, keep the surrounding words, quoting, indentation and line breaks. Do not add, remove, rename or reorder tests, imports, functions or blank lines (the one exception is stated below). Python 3.9-compatible syntax, standard library only. The acceptance counts triple quotes, comment lines and test methods, and fails if any removed line is not one of the listed line numbers.\n\nThis test of an earlier deck (card cli) harvests torvalds and minnow (followers 7, no repos) through score_expertise. megatron/processors.py now implements the log formula (done by a previous card): torvalds 1635, minnow 90.\n\n## Edits in `tests/test_cli.py` (line numbers of the file as given)\n- line 85: `[850302, 7],` -> `[1635, 90],`\n",
+    "max_tokens": 12000,
+    "reasoning_max_tokens": 2500,
+    "variants": 1,
+    "depends_on": [
+      "score-v5"
+    ]
+  },
+  {
+    "custom_id": "e2e-v5",
+    "intent": "patch",
+    "targets": [
+      "tests/test_harvest_e2e.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON_V5.md"
+    ],
+    "acceptance": "D=/tmp/morph/e2e-v5; mkdir -p $D; S=$(date +%s)\ncp tests/test_harvest_e2e.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_harvest_e2e.py\n venv/bin/python -m pytest tests/test_harvest_e2e.py -q --tb=short\n venv/bin/python decks/v5_guard.py tests/test_harvest_e2e.py --quotes 10 --hashes 9 --tests 2 --lines 102,138,139,161,162 --max 60\n cat > $D/m1.py <<'EOF'\n_m_score = score_expertise\ndef score_expertise(profile, stats):\n    record = _m_score(profile, stats)\n    record[\"expertise_score\"] = profile.get(\"followers\", 0) + 2 * stats.get(\"total_stars\", 0)\n    return record\nEOF\n R=$PWD\n mut() { T=$(mktemp -d); cp -r megatron tests decks $T/\n  case \"$2\" in append:*) cat \"${2#append:}\" >> $T/$1;; *) sed -i \"$2\" $T/$1;; esac\n  if cmp -s $1 $T/$1; then echo \"MUTANT NOT APPLIED: $2\"; exit 1; fi\n  if (cd $T && $R/venv/bin/python -m pytest $3 -q --tb=no -p no:cacheprovider); then echo \"MUTANT SURVIVED: $2 -- $4\"; exit 1; fi\n  echo \"mutant killed: $2\"; }\n mut megatron/processors.py append:$D/m1.py \"tests/test_harvest_e2e.py\" \"a processors.py that returns the old linear score passes; the test must assert the new value 1635/90\"\n venv/bin/python -m pytest tests -q --tb=short --ignore=tests/test_score_examples.py --ignore=tests/test_cli.py --ignore=tests/test_storage.py\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON_V5.md FIRST (in your context): section 2.3 is the new formula and its control values, section 2.5 lists the ONLY lines you may change. This is a PATCH of an existing file: return the whole file with only those lines changed. Preserve all existing docstrings and comments verbatim; on the listed lines change only the old number or formula, keep the surrounding words, quoting, indentation and line breaks. Do not add, remove, rename or reorder tests, imports, functions or blank lines (the one exception is stated below). Python 3.9-compatible syntax, standard library only. The acceptance counts triple quotes, comment lines and test methods, and fails if any removed line is not one of the listed line numbers.\n\nThis test of an earlier deck (card e2e) harvests torvalds over the 3 real repos pages (total_stars 262425). megatron/processors.py now implements the log formula (done by a previous card): 325466 / 262425 -> 1635; the single-page value (total_stars 7836) is 1330.\n\n## Edits in `tests/test_harvest_e2e.py` (line numbers of the file as given)\n- line 102: docstring `262425 / 850316.` -> `262425 / 1635.`\n- line 138: expected 850316 -> 1635\n- line 139: msg: `should be 850316 (a single page would give 341138)` -> `should be 1635 (a single page would give 1330)`, rest of the line unchanged\n- line 161: expected 850316 -> 1635\n- line 162: msg: `should still be 850316` -> `should still be 1635`, rest unchanged\n",
+    "max_tokens": 12000,
+    "reasoning_max_tokens": 2500,
+    "variants": 1,
+    "depends_on": [
+      "score-v5"
+    ]
+  },
+  {
+    "custom_id": "storage-v5",
+    "intent": "patch",
+    "targets": [
+      "tests/test_storage.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON_V5.md"
+    ],
+    "acceptance": "D=/tmp/morph/storage-v5; mkdir -p $D; S=$(date +%s)\ncp tests/test_storage.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_storage.py\n venv/bin/python -m pytest tests/test_storage.py -q --tb=short\n venv/bin/python decks/v5_guard.py tests/test_storage.py --quotes 12 --hashes 4 --tests 5 --lines 36,40,41,82,83,99,100,114 --max 60\n cat > $D/m1.py <<'EOF'\n_m_score = score_expertise\ndef score_expertise(profile, stats):\n    record = _m_score(profile, stats)\n    record[\"expertise_score\"] = profile.get(\"followers\", 0) + 2 * stats.get(\"total_stars\", 0)\n    return record\nEOF\n R=$PWD\n mut() { T=$(mktemp -d); cp -r megatron tests decks $T/\n  case \"$2\" in append:*) cat \"${2#append:}\" >> $T/$1;; *) sed -i \"$2\" $T/$1;; esac\n  if cmp -s $1 $T/$1; then echo \"MUTANT NOT APPLIED: $2\"; exit 1; fi\n  if (cd $T && $R/venv/bin/python -m pytest $3 -q --tb=no -p no:cacheprovider); then echo \"MUTANT SURVIVED: $2 -- $4\"; exit 1; fi\n  echo \"mutant killed: $2\"; }\n mut megatron/processors.py append:$D/m1.py \"tests/test_storage.py\" \"a processors.py that returns the old linear score passes; the test must assert the new value 1635/90\"\n venv/bin/python -m pytest tests -q --tb=short --ignore=tests/test_score_examples.py --ignore=tests/test_cli.py --ignore=tests/test_harvest_e2e.py\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON_V5.md FIRST (in your context): section 2.3 is the new formula and its control values, section 2.5 lists the ONLY lines you may change. This is a PATCH of an existing file: return the whole file with only those lines changed. Preserve all existing docstrings and comments verbatim; on the listed lines change only the old number or formula, keep the surrounding words, quoting, indentation and line breaks. Do not add, remove, rename or reorder tests, imports, functions or blank lines (the one exception is stated below). Python 3.9-compatible syntax, standard library only. The acceptance counts triple quotes, comment lines and test methods, and fails if any removed line is not one of the listed line numbers.\n\nThis test of an earlier deck (card store) builds the torvalds record from the fixtures via score_expertise. megatron/processors.py now implements the log formula (done by a previous card): torvalds 1635. The hand-set scores (minnow 100, user_NN i * 10) stay unchanged.\n\n## Edits in `tests/test_storage.py` (line numbers of the file as given)\n- line 36: docstring `(score 850302)` -> `(score 1635)`\n- line 40: expected 850302 -> 1635\n- line 41: msg `must be 850302` -> `must be 1635`\n- line 82: docstring `torvalds (850302)` -> `torvalds (1635)`\n- line 83: docstring `score 850302,` -> `score 1635,`\n- line 99: expected 850302 -> 1635\n- line 100: msg `must be 850302` -> `must be 1635`\n- line 114: comment `# score 850302, must come first` -> `# score 1635, must come first`\n",
+    "max_tokens": 12000,
+    "reasoning_max_tokens": 2500,
+    "variants": 1,
+    "depends_on": [
+      "score-v5"
+    ]
+  }
+]
