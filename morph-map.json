@@ -1,0 +1,69 @@
+{
+ "package": "megatron",
+ "docs": [
+  "docs/TASK_MEGATRON.md",
+  "contour.yaml"
+ ],
+ "cards": {
+  "parse-rate-limit": {
+   "custom_id": "ratelimit",
+   "targets": [
+    "megatron/api_manager.py",
+    "tests/test_api_manager.py"
+   ],
+   "context_slice": [
+    "docs/TASK_MEGATRON.md",
+    "contour.yaml",
+    "tests/fixtures/rate_limit_headers.txt"
+   ]
+  },
+  "parse-profile-data": {
+   "custom_id": "parsers",
+   "targets": [
+    "megatron/parsers.py",
+    "tests/test_parsers.py"
+   ],
+   "context_slice": [
+    "docs/TASK_MEGATRON.md",
+    "contour.yaml",
+    "tests/fixtures/user_torvalds.json"
+   ]
+  },
+  "collect-profiles": {
+   "custom_id": "collect",
+   "targets": [
+    "megatron/collectors.py",
+    "tests/test_collectors.py"
+   ],
+   "context_slice": [
+    "docs/TASK_MEGATRON.md",
+    "contour.yaml",
+    "megatron/parsers.py",
+    "tests/fixtures/search_users_python.json",
+    "tests/fixtures/user_torvalds.json"
+   ]
+  },
+  "score-expertise": {
+   "custom_id": "score",
+   "targets": [
+    "megatron/processors.py",
+    "tests/test_processors.py"
+   ],
+   "context_slice": [
+    "docs/TASK_MEGATRON.md",
+    "contour.yaml"
+   ]
+  },
+  "store-experts": {
+   "custom_id": "store",
+   "targets": [
+    "megatron/storage.py",
+    "tests/test_storage.py"
+   ],
+   "context_slice": [
+    "docs/TASK_MEGATRON.md",
+    "contour.yaml"
+   ]
+  }
+ }
+}

@@ -52,9 +52,13 @@ System:
             /users/<login>/repos JSON list into Repo Stats.
           behavior: >
             parse_user_profile copies the Expert Profile keys from the raw
-            dict; a missing optional key (name, company, location, created_at)
+            dict (the raw GitHub keys have the same names: login, id, name,
+            company, location, followers, public_repos, created_at); a
+            missing optional key (name, company, location, created_at)
             becomes None, missing counters become 0. parse_repo_stats counts
-            all repos in repo_count; forks are excluded from non_fork_count,
+            all repos in repo_count; the raw repo item keys it reads are
+            exactly "fork" (bool), "stargazers_count" (int), "language"
+            (string or null). Forks are excluded from non_fork_count,
             total_stars and languages; a null language is skipped.
           requirements: [Stdlib Only, Real Fixtures]
           guardrails: [Tolerant Parser]

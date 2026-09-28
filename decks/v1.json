@@ -1,0 +1,187 @@
+[
+  {
+    "custom_id": "ratelimit",
+    "intent": "patch",
+    "targets": [
+      "megatron/api_manager.py",
+      "tests/test_api_manager.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "tests/fixtures/rate_limit_headers.txt"
+    ],
+    "acceptance": "D=/tmp/morph/ratelimit; mkdir -p $D; S=$(date +%s)\ncp megatron/api_manager.py $D/0-$S.py 2>/dev/null\ncp tests/test_api_manager.py $D/1-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/api_manager.py tests/test_api_manager.py\n venv/bin/python -m pytest tests/test_api_manager.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n n=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | wc -l); test \"$n\" -eq 0 || { echo \"GUARD FAILED: network import in megatron/\"; exit 1; }\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON.md, contour.yaml, contour.yaml FIRST (in your context). Every name you need is in them or below; do not invent names, keys or files.\n\n## Function Parse Rate Limit\n\nparse_rate_limit(headers) reads GitHub X-RateLimit-* response headers (case-insensitive) into a Rate Limit State; seconds_to_wait(state, now) says how long a collector must sleep.\n\nBehaviour: parse_rate_limit returns a Rate Limit State dict when the three headers X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset are present (any case), and None when any of them is missing. seconds_to_wait returns 0 when state is None or remaining > 0, otherwise max(0, reset - now).\n\nSteps:\n- produces: Rate Limit State\n\nExamples (the tests must prove each one):\n1. given the real headers of tests/fixtures/rate_limit_headers.txt as a dict: x-ratelimit-limit \"60\", x-ratelimit-remaining \"59\", x-ratelimit-reset \"1790594886\"; when parse_rate_limit is called; then the state is {\"limit\": 60, \"remaining\": 59, \"reset\": 1790594886}\n2. given a state {\"limit\": 60, \"remaining\": 59, \"reset\": 1790594886}; when seconds_to_wait(state, now=1790594000); then the result is 0\n3. given a state {\"limit\": 60, \"remaining\": 0, \"reset\": 1790594886}; when seconds_to_wait(state, now=1790594766); then the result is 120\n4. given a headers dict with no X-RateLimit-* keys at all; when parse_rate_limit is called and seconds_to_wait(None, now=1); then parse_rate_limit returns None and seconds_to_wait returns 0 (ref: Tolerant Parser)\n\nData Rate Limit State (definition not found in the record)\n\nRequirements:\n- Stdlib Only: Python 3.9-compatible syntax, standard library only (json, asyncio, sqlite3, unittest). No third-party runtime dependency in v1.\n\nGuardrails:\n- Tolerant Parser: Missing optional fields and a failing single login degrade to None/0/skip, never to an exception that kills the batch.\n\nModule: `megatron/api_manager.py`; test: `tests/test_api_manager.py`.\n\nWrite the files: `megatron/api_manager.py`, `tests/test_api_manager.py`.\n\nPython 3.9-compatible syntax (typing.List/Dict/Optional; no `match`, no `X | Y`), standard library only. Tests are unittest with `msg=` on every assertion; each test's docstring names the example or rule it checks.",
+    "max_tokens": 16000,
+    "reasoning_max_tokens": 2500
+  },
+  {
+    "custom_id": "ratelimit-judge",
+    "intent": "patch",
+    "targets": [
+      "tests/test_ratelimit_examples.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "megatron/api_manager.py"
+    ],
+    "acceptance": "D=/tmp/morph/ratelimit-judge; mkdir -p $D; S=$(date +%s)\ncp tests/test_ratelimit_examples.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_ratelimit_examples.py\n venv/bin/python -m pytest tests/test_ratelimit_examples.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Write ONLY the test file `tests/test_ratelimit_examples.py`: example-based tests for `megatron/api_manager.py` taken from the examples in docs/TASK_MEGATRON.md, contour.yaml, contour.yaml. Do not write or modify `megatron/api_manager.py` -- the author of the criterion is not the author of the code. unittest, `msg=` on every assertion, each test's docstring names the example it checks. Python 3.9-compatible syntax, standard library only.\n\nThe examples below are the criterion, and you are its independent author: write one test per example (no fewer, no merging), and each test's docstring names the Function and the example number, e.g. `Parse Rate Limit example 1`.\n\nExamples of Function Parse Rate Limit:\n1. given the real headers of tests/fixtures/rate_limit_headers.txt as a dict: x-ratelimit-limit \"60\", x-ratelimit-remaining \"59\", x-ratelimit-reset \"1790594886\"; when parse_rate_limit is called; then the state is {\"limit\": 60, \"remaining\": 59, \"reset\": 1790594886}\n2. given a state {\"limit\": 60, \"remaining\": 59, \"reset\": 1790594886}; when seconds_to_wait(state, now=1790594000); then the result is 0\n3. given a state {\"limit\": 60, \"remaining\": 0, \"reset\": 1790594886}; when seconds_to_wait(state, now=1790594766); then the result is 120\n4. given a headers dict with no X-RateLimit-* keys at all; when parse_rate_limit is called and seconds_to_wait(None, now=1); then parse_rate_limit returns None and seconds_to_wait returns 0 (ref: Tolerant Parser)",
+    "max_tokens": 14000,
+    "reasoning_max_tokens": 2500,
+    "depends_on": [
+      "ratelimit"
+    ]
+  },
+  {
+    "custom_id": "parsers",
+    "intent": "patch",
+    "targets": [
+      "megatron/parsers.py",
+      "tests/test_parsers.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "tests/fixtures/user_torvalds.json"
+    ],
+    "acceptance": "D=/tmp/morph/parsers; mkdir -p $D; S=$(date +%s)\ncp megatron/parsers.py $D/0-$S.py 2>/dev/null\ncp tests/test_parsers.py $D/1-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/parsers.py tests/test_parsers.py\n venv/bin/python -m pytest tests/test_parsers.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n n=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | wc -l); test \"$n\" -eq 0 || { echo \"GUARD FAILED: network import in megatron/\"; exit 1; }\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON.md, contour.yaml, contour.yaml FIRST (in your context). Every name you need is in them or below; do not invent names, keys or files.\n\n## Function Parse Profile Data\n\nparse_user_profile(data) turns a GitHub /users/<login> JSON dict into an Expert Profile; parse_repo_stats(login, repos) turns a /users/<login>/repos JSON list into Repo Stats.\n\nBehaviour: parse_user_profile copies the Expert Profile keys from the raw dict (the raw GitHub keys have the same names: login, id, name, company, location, followers, public_repos, created_at); a missing optional key (name, company, location, created_at) becomes None, missing counters become 0. parse_repo_stats counts all repos in repo_count; the raw repo item keys it reads are exactly \"fork\" (bool), \"stargazers_count\" (int), \"language\" (string or null). Forks are excluded from non_fork_count, total_stars and languages; a null language is skipped.\n\nSteps:\n- reads: GitHub User JSON\n- reads: GitHub Repos JSON\n- produces: Expert Profile\n- produces: Repo Stats\n\nExamples (the tests must prove each one):\n1. given the real file tests/fixtures/user_torvalds.json; when parse_user_profile is called on its parsed JSON; then login is \"torvalds\", id is 1024025, followers is 325466, public_repos is 12, name is \"Linus Torvalds\"\n2. given a minimal dict {\"login\": \"x\", \"id\": 1}; when parse_user_profile is called; then followers is 0, public_repos is 0, name is None, company is None, location is None, created_at is None (ref: Tolerant Parser)\n3. given the real file tests/fixtures/repos_torvalds.json (12 repos); when parse_repo_stats(\"torvalds\", repos) is called; then repo_count is 12, non_fork_count is 9, total_stars is 262418, languages is {\"C\": 8, \"OpenSCAD\": 1}\n\nData GitHub User JSON (definition not found in the record)\n\nData GitHub Repos JSON (definition not found in the record)\n\nData Expert Profile (definition not found in the record)\n\nData Repo Stats (definition not found in the record)\n\nRequirements:\n- Stdlib Only: Python 3.9-compatible syntax, standard library only (json, asyncio, sqlite3, unittest). No third-party runtime dependency in v1.\n- Real Fixtures: Every number in the examples is read from tests/fixtures/* fetched from api.github.com on 2026-09-28, not invented.\n\nGuardrails:\n- Tolerant Parser: Missing optional fields and a failing single login degrade to None/0/skip, never to an exception that kills the batch.\n\nModule: `megatron/parsers.py`; test: `tests/test_parsers.py`.\n\nWrite the files: `megatron/parsers.py`, `tests/test_parsers.py`.\n\nPython 3.9-compatible syntax (typing.List/Dict/Optional; no `match`, no `X | Y`), standard library only. Tests are unittest with `msg=` on every assertion; each test's docstring names the example or rule it checks.",
+    "max_tokens": 21500,
+    "reasoning_max_tokens": 2500,
+    "variants": 2
+  },
+  {
+    "custom_id": "collect",
+    "intent": "patch",
+    "targets": [
+      "megatron/collectors.py",
+      "tests/test_collectors.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "megatron/parsers.py",
+      "tests/fixtures/search_users_python.json",
+      "tests/fixtures/user_torvalds.json"
+    ],
+    "acceptance": "D=/tmp/morph/collect; mkdir -p $D; S=$(date +%s)\ncp megatron/collectors.py $D/0-$S.py 2>/dev/null\ncp tests/test_collectors.py $D/1-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/collectors.py tests/test_collectors.py\n venv/bin/python -m pytest tests/test_collectors.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n n=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | wc -l); test \"$n\" -eq 0 || { echo \"GUARD FAILED: network import in megatron/\"; exit 1; }\n venv/bin/python -m pytest tests -q --tb=short\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON.md, contour.yaml, contour.yaml FIRST (in your context). Every name you need is in them or below; do not invent names, keys or files.\n\n## Function Collect Profiles\n\nasync collect_profiles(logins, fetch_json, concurrency=10) fetches profile and repos for every login through the injected fetcher and returns parsed pairs in input order.\n\nBehaviour: For each login it awaits fetch_json(\"/users/<login>\") and fetch_json(\"/users/<login>/repos?per_page=100\"), builds {\"profile\": Expert Profile, \"stats\": Repo Stats}, and returns the list in the order of the input logins. At most `concurrency` logins are in flight at once (asyncio.Semaphore). If fetch_json raises for a login, that entry is None and the others are unaffected. The module itself opens no sockets: fetch_json is the only door to the network.\n\nSteps:\n- calls: Parse Profile Data\n- produces: Expert Pair\n\nExamples (the tests must prove each one):\n1. given the 5 logins of tests/fixtures/search_users_python.json items (karpathy, openai, google, huggingface, rafaballerini) and a fake async fetch_json that returns the parsed user_torvalds.json for any /users/<login> and the parsed repos_torvalds.json for any /users/<login>/repos; when collect_profiles(logins, fetch_json, concurrency=2) is awaited; then the result has 5 entries in input order, each with profile login \"torvalds\" and stats total_stars 262418, and the fake was called exactly 10 times\n2. given the same 5 logins and a fetcher that raises ValueError for \"google\" only; when collect_profiles is awaited; then entry 2 is None and the other 4 entries are parsed pairs (ref: Tolerant Parser)\n\nData Expert Pair (definition not found in the record)\n\nRequirements:\n- Stdlib Only: Python 3.9-compatible syntax, standard library only (json, asyncio, sqlite3, unittest). No third-party runtime dependency in v1.\n- Offline Tests: No test opens a network connection. All GitHub data in tests comes from tests/fixtures/*, which are verbatim API responses.\n\nGuardrails:\n- No Network In Core: No module under megatron/ imports urllib.request, http.client, requests or socket in v1; the fetcher is injected.\n\nModule: `megatron/collectors.py`; test: `tests/test_collectors.py`.\n\nWrite the files: `megatron/collectors.py`, `tests/test_collectors.py`.\n\nPython 3.9-compatible syntax (typing.List/Dict/Optional; no `match`, no `X | Y`), standard library only. Tests are unittest with `msg=` on every assertion; each test's docstring names the example or rule it checks.",
+    "max_tokens": 17000,
+    "reasoning_max_tokens": 2500,
+    "depends_on": [
+      "parsers"
+    ]
+  },
+  {
+    "custom_id": "parsers-judge",
+    "intent": "patch",
+    "targets": [
+      "tests/test_parsers_examples.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "megatron/parsers.py"
+    ],
+    "acceptance": "D=/tmp/morph/parsers-judge; mkdir -p $D; S=$(date +%s)\ncp tests/test_parsers_examples.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_parsers_examples.py\n venv/bin/python -m pytest tests/test_parsers_examples.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Write ONLY the test file `tests/test_parsers_examples.py`: example-based tests for `megatron/parsers.py` taken from the examples in docs/TASK_MEGATRON.md, contour.yaml, contour.yaml. Do not write or modify `megatron/parsers.py` -- the author of the criterion is not the author of the code. unittest, `msg=` on every assertion, each test's docstring names the example it checks. Python 3.9-compatible syntax, standard library only.\n\nThe examples below are the criterion, and you are its independent author: write one test per example (no fewer, no merging), and each test's docstring names the Function and the example number, e.g. `Parse Profile Data example 1`.\n\nExamples of Function Parse Profile Data:\n1. given the real file tests/fixtures/user_torvalds.json; when parse_user_profile is called on its parsed JSON; then login is \"torvalds\", id is 1024025, followers is 325466, public_repos is 12, name is \"Linus Torvalds\"\n2. given a minimal dict {\"login\": \"x\", \"id\": 1}; when parse_user_profile is called; then followers is 0, public_repos is 0, name is None, company is None, location is None, created_at is None (ref: Tolerant Parser)\n3. given the real file tests/fixtures/repos_torvalds.json (12 repos); when parse_repo_stats(\"torvalds\", repos) is called; then repo_count is 12, non_fork_count is 9, total_stars is 262418, languages is {\"C\": 8, \"OpenSCAD\": 1}",
+    "max_tokens": 13500,
+    "reasoning_max_tokens": 2500,
+    "depends_on": [
+      "parsers"
+    ]
+  },
+  {
+    "custom_id": "collect-judge",
+    "intent": "patch",
+    "targets": [
+      "tests/test_collect_examples.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "megatron/collectors.py"
+    ],
+    "acceptance": "D=/tmp/morph/collect-judge; mkdir -p $D; S=$(date +%s)\ncp tests/test_collect_examples.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_collect_examples.py\n venv/bin/python -m pytest tests/test_collect_examples.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Write ONLY the test file `tests/test_collect_examples.py`: example-based tests for `megatron/collectors.py` taken from the examples in docs/TASK_MEGATRON.md, contour.yaml, contour.yaml. Do not write or modify `megatron/collectors.py` -- the author of the criterion is not the author of the code. unittest, `msg=` on every assertion, each test's docstring names the example it checks. Python 3.9-compatible syntax, standard library only.\n\nThe examples below are the criterion, and you are its independent author: write one test per example (no fewer, no merging), and each test's docstring names the Function and the example number, e.g. `Collect Profiles example 1`.\n\nExamples of Function Collect Profiles:\n1. given the 5 logins of tests/fixtures/search_users_python.json items (karpathy, openai, google, huggingface, rafaballerini) and a fake async fetch_json that returns the parsed user_torvalds.json for any /users/<login> and the parsed repos_torvalds.json for any /users/<login>/repos; when collect_profiles(logins, fetch_json, concurrency=2) is awaited; then the result has 5 entries in input order, each with profile login \"torvalds\" and stats total_stars 262418, and the fake was called exactly 10 times\n2. given the same 5 logins and a fetcher that raises ValueError for \"google\" only; when collect_profiles is awaited; then entry 2 is None and the other 4 entries are parsed pairs (ref: Tolerant Parser)",
+    "max_tokens": 13000,
+    "reasoning_max_tokens": 2500,
+    "depends_on": [
+      "collect"
+    ]
+  },
+  {
+    "custom_id": "score",
+    "intent": "patch",
+    "targets": [
+      "megatron/processors.py",
+      "tests/test_processors.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml"
+    ],
+    "acceptance": "D=/tmp/morph/score; mkdir -p $D; S=$(date +%s)\ncp megatron/processors.py $D/0-$S.py 2>/dev/null\ncp tests/test_processors.py $D/1-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/processors.py tests/test_processors.py\n venv/bin/python -m pytest tests/test_processors.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n n=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | wc -l); test \"$n\" -eq 0 || { echo \"GUARD FAILED: network import in megatron/\"; exit 1; }\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON.md, contour.yaml, contour.yaml FIRST (in your context). Every name you need is in them or below; do not invent names, keys or files.\n\n## Function Score Expertise\n\nscore_expertise(profile, stats) merges an Expert Profile and its Repo Stats into an Expert Record with expertise_score and primary_language.\n\nBehaviour: expertise_score = followers + 2 * total_stars (integers). primary_language is the language with the highest count in stats[\"languages\"] (ties broken by lexicographic order), or None when languages is empty. The record carries the Expert Profile keys plus total_stars, languages, expertise_score, primary_language. No second serialization of the profile.\n\nSteps:\n- reads: Expert Profile\n- reads: Repo Stats\n- produces: Expert Record\n\nExamples (the tests must prove each one):\n1. given the torvalds profile (followers 325466) and stats (total_stars 262418, languages {\"C\": 8, \"OpenSCAD\": 1}); when score_expertise is called; then expertise_score is 850302 and primary_language is \"C\"\n2. given stats with languages {} and total_stars 0, profile with followers 7; when score_expertise is called; then expertise_score is 7 and primary_language is None\n\nData Expert Profile (definition not found in the record)\n\nData Repo Stats (definition not found in the record)\n\nData Expert Record (definition not found in the record)\n\nRequirements:\n- Stdlib Only: Python 3.9-compatible syntax, standard library only (json, asyncio, sqlite3, unittest). No third-party runtime dependency in v1.\n\nModule: `megatron/processors.py`; test: `tests/test_processors.py`.\n\nWrite the files: `megatron/processors.py`, `tests/test_processors.py`.\n\nPython 3.9-compatible syntax (typing.List/Dict/Optional; no `match`, no `X | Y`), standard library only. Tests are unittest with `msg=` on every assertion; each test's docstring names the example or rule it checks.",
+    "max_tokens": 19000,
+    "reasoning_max_tokens": 2500,
+    "variants": 2
+  },
+  {
+    "custom_id": "score-judge",
+    "intent": "patch",
+    "targets": [
+      "tests/test_score_examples.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "megatron/processors.py"
+    ],
+    "acceptance": "D=/tmp/morph/score-judge; mkdir -p $D; S=$(date +%s)\ncp tests/test_score_examples.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_score_examples.py\n venv/bin/python -m pytest tests/test_score_examples.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Write ONLY the test file `tests/test_score_examples.py`: example-based tests for `megatron/processors.py` taken from the examples in docs/TASK_MEGATRON.md, contour.yaml, contour.yaml. Do not write or modify `megatron/processors.py` -- the author of the criterion is not the author of the code. unittest, `msg=` on every assertion, each test's docstring names the example it checks. Python 3.9-compatible syntax, standard library only.\n\nThe examples below are the criterion, and you are its independent author: write one test per example (no fewer, no merging), and each test's docstring names the Function and the example number, e.g. `Score Expertise example 1`.\n\nExamples of Function Score Expertise:\n1. given the torvalds profile (followers 325466) and stats (total_stars 262418, languages {\"C\": 8, \"OpenSCAD\": 1}); when score_expertise is called; then expertise_score is 850302 and primary_language is \"C\"\n2. given stats with languages {} and total_stars 0, profile with followers 7; when score_expertise is called; then expertise_score is 7 and primary_language is None",
+    "max_tokens": 13000,
+    "reasoning_max_tokens": 2500,
+    "depends_on": [
+      "score"
+    ]
+  },
+  {
+    "custom_id": "store",
+    "intent": "patch",
+    "targets": [
+      "megatron/storage.py",
+      "tests/test_storage.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml"
+    ],
+    "acceptance": "D=/tmp/morph/store; mkdir -p $D; S=$(date +%s)\ncp megatron/storage.py $D/0-$S.py 2>/dev/null\ncp tests/test_storage.py $D/1-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" megatron/storage.py tests/test_storage.py\n venv/bin/python -m pytest tests/test_storage.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n n=$(grep -lE \"(import|from) +(urllib|requests|socket|http)\" megatron/*.py | wc -l); test \"$n\" -eq 0 || { echo \"GUARD FAILED: network import in megatron/\"; exit 1; }\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Read docs/TASK_MEGATRON.md, contour.yaml, contour.yaml FIRST (in your context). Every name you need is in them or below; do not invent names, keys or files.\n\n## Function Store Experts\n\nsave_experts(db_path, records) upserts Expert Records into the experts table keyed by login; top_experts(db_path, n=10) returns the n records with the highest expertise_score.\n\nBehaviour: save_experts creates the schema if absent (CREATE TABLE IF NOT EXISTS experts, login TEXT PRIMARY KEY), upserts by login (INSERT ... ON CONFLICT(login) DO UPDATE), stores languages as a JSON string, and returns the number of records written. top_experts returns Expert Records ordered by expertise_score DESC, languages decoded back to a dict.\n\nSteps:\n- reads: Expert Record\n- modifies: Experts Database\n\nExamples (the tests must prove each one):\n1. given the torvalds Expert Record (expertise_score 850302) saved twice into a fresh temp db; when the experts table is counted; then there is exactly 1 row\n2. given that db plus a second record login \"minnow\" with expertise_score 100; when top_experts(db_path, 1) is called; then the result is one record, login \"torvalds\", expertise_score 850302, languages equal to {\"C\": 8, \"OpenSCAD\": 1}\n\nData Expert Record (definition not found in the record)\n\nData Experts Database: A SQLite file with one table, experts, keyed by login.\nSchema:\nexperts(login TEXT PRIMARY KEY, id INTEGER, name TEXT, company TEXT, location TEXT, followers INTEGER, public_repos INTEGER, created_at TEXT, total_stars INTEGER, languages TEXT, expertise_score INTEGER, primary_language TEXT)\n\nRequirements:\n- Stdlib Only: Python 3.9-compatible syntax, standard library only (json, asyncio, sqlite3, unittest). No third-party runtime dependency in v1.\n\nGuardrails:\n- No Network In Core: No module under megatron/ imports urllib.request, http.client, requests or socket in v1; the fetcher is injected.\n\nModule: `megatron/storage.py`; test: `tests/test_storage.py`.\n\nWrite the files: `megatron/storage.py`, `tests/test_storage.py`.\n\nPython 3.9-compatible syntax (typing.List/Dict/Optional; no `match`, no `X | Y`), standard library only. Tests are unittest with `msg=` on every assertion; each test's docstring names the example or rule it checks.",
+    "max_tokens": 17000,
+    "reasoning_max_tokens": 2500
+  },
+  {
+    "custom_id": "store-judge",
+    "intent": "patch",
+    "targets": [
+      "tests/test_store_examples.py"
+    ],
+    "context_slice": [
+      "docs/TASK_MEGATRON.md",
+      "contour.yaml",
+      "megatron/storage.py"
+    ],
+    "acceptance": "D=/tmp/morph/store-judge; mkdir -p $D; S=$(date +%s)\ncp tests/test_store_examples.py $D/0-$S.py 2>/dev/null\n(\n set -e\n venv/bin/python -c \"import ast,sys; [ast.parse(open(f).read(), f, feature_version=(3,9)) for f in sys.argv[1:]]\" tests/test_store_examples.py\n venv/bin/python -m pytest tests/test_store_examples.py -q --tb=short\n venv/bin/python -m pytest tests -q --tb=short\n) > $D/acc.log 2>&1; rc=$?; cat $D/acc.log; exit $rc",
+    "instruction": "Write ONLY the test file `tests/test_store_examples.py`: example-based tests for `megatron/storage.py` taken from the examples in docs/TASK_MEGATRON.md, contour.yaml, contour.yaml. Do not write or modify `megatron/storage.py` -- the author of the criterion is not the author of the code. unittest, `msg=` on every assertion, each test's docstring names the example it checks. Python 3.9-compatible syntax, standard library only.\n\nThe examples below are the criterion, and you are its independent author: write one test per example (no fewer, no merging), and each test's docstring names the Function and the example number, e.g. `Store Experts example 1`.\n\nExamples of Function Store Experts:\n1. given the torvalds Expert Record (expertise_score 850302) saved twice into a fresh temp db; when the experts table is counted; then there is exactly 1 row\n2. given that db plus a second record login \"minnow\" with expertise_score 100; when top_experts(db_path, 1) is called; then the result is one record, login \"torvalds\", expertise_score 850302, languages equal to {\"C\": 8, \"OpenSCAD\": 1}",
+    "max_tokens": 13000,
+    "reasoning_max_tokens": 2500,
+    "depends_on": [
+      "store"
+    ]
+  }
+]
