@@ -1,0 +1,218 @@
+{
+  "deck_id": "20260928-135849-f40fb5c6",
+  "completed_at": "2026-09-28T14:02:15.870",
+  "branch": "morph/20260928-135849-f40fb5c6",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "search"
+    ],
+    [
+      "cli-discover",
+      "discover-judge"
+    ]
+  ],
+  "batch_ids": [
+    "local-009c0b95e73d46908a31e339c97ba481",
+    "local-d6b4d4c496fc481e83539fe0776487cc"
+  ],
+  "outcomes": {
+    "search": {
+      "custom_id": "search",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/search.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_search.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "search",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "d59904e454e10c1a79fe9b6d402cfe424aaa15f3",
+      "diffstat": [
+        {
+          "path": "megatron/search.py",
+          "insertions": 111,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_search.py",
+          "insertions": 267,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/search.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/search.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_search.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_search.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "cli-discover": {
+      "custom_id": "cli-discover",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/cli.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_cli_discover.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "cli-discover",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "6e698d33482130db3392653685aa41f03dbb2c2a",
+      "diffstat": [
+        {
+          "path": "megatron/cli.py",
+          "insertions": 23,
+          "deletions": 1
+        },
+        {
+          "path": "tests/test_cli_discover.py",
+          "insertions": 143,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/cli.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/cli.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_cli_discover.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_cli_discover.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "discover-judge": {
+      "custom_id": "discover-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_discover_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "discover-judge",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "175f5e381b16cf4a5511ae4054aa686a7325c566",
+      "diffstat": [
+        {
+          "path": "tests/test_discover_examples.py",
+          "insertions": 153,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_discover_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_discover_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "search": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790600330-sDdR22QLww1m2aDCC7WQ",
+      "input_tokens": 10357,
+      "output_tokens": 5346,
+      "cost": 0.0035925675,
+      "finish_reason": "stop"
+    },
+    "discover-judge": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790600466-FPVKLayRBHRZiI9hgqC1",
+      "input_tokens": 10079,
+      "output_tokens": 1904,
+      "cost": 0.0020942725,
+      "finish_reason": "stop"
+    },
+    "cli-discover": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790600466-jmOaPvQi7eTzYggckDYS",
+      "input_tokens": 11419,
+      "output_tokens": 2637,
+      "cost": 0.0025766475,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 31855,
+    "output_tokens": 9887,
+    "cost": 0.0082634875,
+    "requests": 3,
+    "requests_with_usage": 3
+  },
+  "orchestrator_usage": {}
+}
