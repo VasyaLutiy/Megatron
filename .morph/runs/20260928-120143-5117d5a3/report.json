@@ -1,0 +1,649 @@
+{
+  "deck_id": "20260928-120143-5117d5a3",
+  "completed_at": "2026-09-28T12:05:08.637",
+  "branch": "morph/20260928-120143-5117d5a3",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "ratelimit",
+      "parsers",
+      "score",
+      "store"
+    ],
+    [
+      "ratelimit-judge",
+      "collect",
+      "parsers-judge",
+      "score-judge",
+      "store-judge"
+    ],
+    [
+      "collect-judge"
+    ]
+  ],
+  "batch_ids": [
+    "local-2fd2ddfbd9ae496d96e7e28c3dcadaca",
+    "local-1997a6f229c348daa6529fabedcdad7e",
+    "local-6ca553edee6840048f26db63188e66fc"
+  ],
+  "outcomes": {
+    "ratelimit": {
+      "custom_id": "ratelimit",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/api_manager.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_api_manager.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "ratelimit",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "dc15757496b2c7db8be3ff882c04894e9d1963de",
+      "diffstat": [
+        {
+          "path": "megatron/api_manager.py",
+          "insertions": 48,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_api_manager.py",
+          "insertions": 130,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/api_manager.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/api_manager.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_api_manager.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_api_manager.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "parsers": {
+      "custom_id": "parsers",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/parsers.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_parsers.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "parsers.v1",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "40b2c8bbb9848702b0d1875b5d8fd688432f9109",
+      "diffstat": [
+        {
+          "path": "megatron/parsers.py",
+          "insertions": 58,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_parsers.py",
+          "insertions": 83,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/parsers.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/parsers.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_parsers.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_parsers.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "score": {
+      "custom_id": "score",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/processors.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_processors.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "score.v1",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "8d8118ea7100fe6f24b7139903855167386f1ba9",
+      "diffstat": [
+        {
+          "path": "megatron/processors.py",
+          "insertions": 32,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_processors.py",
+          "insertions": 92,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/processors.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/processors.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_processors.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_processors.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "store": {
+      "custom_id": "store",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/storage.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_storage.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "store",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "3131717a2fae5e20b9643d0e6bfd958500c6cc5c",
+      "diffstat": [
+        {
+          "path": "megatron/storage.py",
+          "insertions": 98,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_storage.py",
+          "insertions": 149,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/storage.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/storage.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_storage.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_storage.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "ratelimit-judge": {
+      "custom_id": "ratelimit-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_ratelimit_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "ratelimit-judge",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "b3ad8e91aa09462136b2df2074afa1764fa623d7",
+      "diffstat": [
+        {
+          "path": "tests/test_ratelimit_examples.py",
+          "insertions": 100,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_ratelimit_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_ratelimit_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "collect": {
+      "custom_id": "collect",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/megatron/collectors.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_collectors.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "collect",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "1ed049b51c2602e6ce4af10a983c069ebcace7f1",
+      "diffstat": [
+        {
+          "path": "megatron/collectors.py",
+          "insertions": 42,
+          "deletions": 0
+        },
+        {
+          "path": "tests/test_collectors.py",
+          "insertions": 123,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "megatron/collectors.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "megatron/collectors.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          },
+          {
+            "path": "tests/test_collectors.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_collectors.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "parsers-judge": {
+      "custom_id": "parsers-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_parsers_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "parsers-judge",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "0bb2cc31d959b609d1af4cdf139efd839fcec626",
+      "diffstat": [
+        {
+          "path": "tests/test_parsers_examples.py",
+          "insertions": 65,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_parsers_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_parsers_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "score-judge": {
+      "custom_id": "score-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_score_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "score-judge",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "bdb34e10a70ccf484a7f0b90849d79788ebe0bd9",
+      "diffstat": [
+        {
+          "path": "tests/test_score_examples.py",
+          "insertions": 126,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_score_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_score_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "store-judge": {
+      "custom_id": "store-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_store_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "store-judge",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "91e186b657426e5f52c52d384e56ebd6a635eb14",
+      "diffstat": [
+        {
+          "path": "tests/test_store_examples.py",
+          "insertions": 77,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_store_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_store_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    },
+    "collect-judge": {
+      "custom_id": "collect-judge",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_collect_examples.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "collect-judge",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "b582109e52fe39c309eff7172627a7a28fa1b321",
+      "diffstat": [
+        {
+          "path": "tests/test_collect_examples.py",
+          "insertions": 108,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_collect_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_collect_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "score.v1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593304-z5ApsKZyf5SeZF2lnifh",
+      "input_tokens": 5160,
+      "output_tokens": 1170,
+      "cost": 0.00115515,
+      "finish_reason": "stop"
+    },
+    "parsers.v1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593304-GgBwKSB6PpOsnp769b0W",
+      "input_tokens": 5898,
+      "output_tokens": 1388,
+      "cost": 0.001341895,
+      "finish_reason": "stop"
+    },
+    "ratelimit": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593304-2Prxt1fXdkFlUjnaaCYo",
+      "input_tokens": 5444,
+      "output_tokens": 1486,
+      "cost": 0.00132566,
+      "finish_reason": "stop"
+    },
+    "parsers.v2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593304-guiQT1EDtBo17WvBlhm7",
+      "input_tokens": 5898,
+      "output_tokens": 1701,
+      "cost": 0.000874344,
+      "finish_reason": "stop"
+    },
+    "score.v2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593331-vxr33Iuasq0mDaIJ77W2",
+      "input_tokens": 5160,
+      "output_tokens": 1377,
+      "cost": 0.000779637,
+      "finish_reason": "stop"
+    },
+    "store": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593335-cEie1BLXOJgyXGDhyd47",
+      "input_tokens": 5247,
+      "output_tokens": 2047,
+      "cost": 0.0010754795,
+      "finish_reason": "stop"
+    },
+    "parsers-judge": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593386-WIVsBTxwzaIZPt3S2spq",
+      "input_tokens": 5489,
+      "output_tokens": 678,
+      "cost": 0.0009879975,
+      "finish_reason": "stop"
+    },
+    "ratelimit-judge": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593386-FlG5SE6WHxNViv0NujYG",
+      "input_tokens": 5466,
+      "output_tokens": 1074,
+      "cost": 0.001153365,
+      "finish_reason": "stop"
+    },
+    "collect": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593386-smeN8rpMXQL4JQpwMSCb",
+      "input_tokens": 7912,
+      "output_tokens": 1212,
+      "cost": 0.001053864,
+      "finish_reason": "stop"
+    },
+    "score-judge": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593386-bYVoA3fMCJwfWgaelnuL",
+      "input_tokens": 5247,
+      "output_tokens": 1446,
+      "cost": 0.0008135265,
+      "finish_reason": "stop"
+    },
+    "store-judge": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593426-vVCjh5kBLKRrvJRZEYCO",
+      "input_tokens": 5621,
+      "output_tokens": 689,
+      "cost": 0.0005394865,
+      "finish_reason": "stop"
+    },
+    "collect-judge": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790593475-DDtQ3McYOSoaScWgSHmk",
+      "input_tokens": 5363,
+      "output_tokens": 876,
+      "cost": 0.0005860665,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 67905,
+    "output_tokens": 15144,
+    "cost": 0.011686471499999998,
+    "requests": 12,
+    "requests_with_usage": 12
+  },
+  "orchestrator_usage": {}
+}
