@@ -96,3 +96,22 @@ def top_experts(db_path, n=10):
         return out
     finally:
         conn.close()
+
+
+def existing_logins(db_path):
+    # type: (str) -> Set[str]
+    """Return the set of login values in the experts table.
+
+    A db without the table (a fresh path, an empty file) gives set();
+    this function never raises for that and never writes rows.
+    """
+    conn = sqlite3.connect(db_path)
+    try:
+        cur = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name='experts'"
+        )
+        if cur.fetchone() is None:
+            return set()
+        return {row[0] for row in conn.execute("SELECT login FROM experts")}
+    finally:
+        conn.close()
