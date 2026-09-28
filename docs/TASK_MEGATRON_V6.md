@@ -355,3 +355,51 @@ is green with at least 94 tests, 0 mutant survivors.
 Cards written/failed/skipped, attempts per card, regeneration causes (from
 `/tmp/morph/<card>/` and `.morph/rejected/`), wall time per generation,
 provider bill, per-file numstat, final test count, mutant kill table.
+
+## 11. Actual
+
+Two runs, processor `glm` (z-ai/glm-5.3-flash, sync), `--root` absolute.
+
+- `20260928-154939-474d8d7c` (deck `v6.json`, 4 cards, 3 generations, 9 min):
+  store-v6 written on attempt 2 (attempt 1 rejected by the syntax gate),
+  search-v6 written on attempt 3 (attempts 1–2: `DELETION GUARD FAILED:
+  removed old line(s) [66]` — the docstring sentence was appended to line 66
+  instead of added after it; the §2.5 range did not include 66, a criterion
+  gap; attempt 3 added the lines below it), **cli-v6 failed** (3 attempts;
+  `cli.py` passed the guard every time, the new test file was wrong: K.1–K.5
+  pre-seed/recording mix-ups, then a guessed row order `["minnow",
+  "torvalds"]` against `top_experts` DESC), resilience-judge skipped.
+  $0.02548, 8 requests.
+- `20260928-160220-78b31afb` (deck `v6-rerun.json`: cli-v6 with `variants: 2`
+  and a note on row order / pre-seeding, resilience-judge): both written by
+  variant v2 (v1 of each failed acceptance). $0.01586, 4 requests, 4 min.
+
+| quantity | prediction | actual |
+|---|---|---|
+| cards | 4 | 4 written (2 + 2 on the rerun) |
+| generations | 3 | 3 + 2 (rerun) |
+| provider bill | < $0.05 | **$0.04134** (12 requests) |
+| cards with regeneration | 1–2 | **4** (store 1, search 2, cli 3 + rerun, judge v1 of 2) |
+| mutants surviving | 0 of 12 | **0** (every accepted chain printed `mutant killed` for each of its mutants) |
+| tests at the end | 80 + 14…24 | **107 passed** (80 + 4 + 2 + 10 + 11) |
+| removed lines outside §2.5 | 0 | **0** (search 15, 90; cli 28–29, 31–37, 78; test_search 247–250; storage none) |
+| files in `.morph/rejected/` | = gate rejections | **1 = 1** (`20260928-155110-store-v6.txt`) |
+
+**Falsifiable claim — held, with one rerun:** 4/4 written, removed lines ⊆ §2.5,
+107 ≥ 94 tests green, 0 survivors.
+
+Findings:
+
+1. **First live check of `.morph/rejected/` — it works, and it refutes the v5
+   hypothesis for this case.** The rejected store-v6 answer has exactly one
+   fenced block per file (4 fences for 2 files); what broke line 1 is a `---`
+   line opening each block — the delimiter of the compiler's "Original file:
+   `---` … `---`" framing, echoed back, even into the NEW test file.
+   Not a second fenced block.
+2. `variants: 2` on a single-target card again committed a copy
+   (`tests/test_resilience_examples.resilience-judge.v2.py`) that breaks pytest
+   collection (v5 finding 2, repeated); removed by hand. The multi-target
+   cli-v6 with `variants: 2` left no copy.
+3. The acceptance of a variant card shares `/tmp/morph/<card>/acc.log` across
+   variants, so v1's failure log was overwritten by v2; only the snapshots
+   survive.
