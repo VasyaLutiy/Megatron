@@ -26,7 +26,7 @@ def _record_a():
         "created_at": "2011-09-03T15:26:22Z",
         "total_stars": 262418,
         "languages": {"C": 8, "OpenSCAD": 1},
-        "expertise_score": 850302,
+        "expertise_score": 1635,
         "primary_language": "C",
     }
 
@@ -37,7 +37,7 @@ def _record_b():
     rec = copy.deepcopy(_record_a())
     rec["followers"] = 325474
     rec["total_stars"] = 262428
-    rec["expertise_score"] = 850330
+    rec["expertise_score"] = 1635
     return rec
 
 
@@ -66,13 +66,13 @@ class StoreUpsertTests(unittest.TestCase):
             self.assertEqual(actual, expected,
                              msg="top_experts returns exactly [B] with "
                                  "followers 325474, total_stars 262428, "
-                                 "expertise_score 850330")
+                                 "expertise_score 1635")
             self.assertEqual(actual[0]["followers"], 325474,
                              msg="followers updated to 325474")
             self.assertEqual(actual[0]["total_stars"], 262428,
                              msg="total_stars updated to 262428")
-            self.assertEqual(actual[0]["expertise_score"], 850330,
-                             msg="expertise_score updated to 850330")
+            self.assertEqual(actual[0]["expertise_score"], 1635,
+                             msg="expertise_score of B is 1635")
 
 
 if __name__ == "__main__":
