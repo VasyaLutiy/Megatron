@@ -142,4 +142,27 @@ sessions.
 
 ## 11. Actual
 
-*(to be filled after the run)*
+The deck was executed twice on 2026-09-28 from the same `master` baseline:
+first per Scenario C (two Claude Code agents on sonnet, branch `morph/v1`,
+kept as reference, unmerged), then by Morph on glm-5.3-flash (branch
+`morph/20260928-120143-5117d5a3`). **The Morph run is the supported
+implementation and is what this table reports; it is what was merged.**
+Archive: `.morph/runs/20260928-120143-5117d5a3/`.
+
+| quantity | prediction | Morph/glm actual | Scenario C actual (reference) |
+|---|---|---|---|
+| cards in the deck | 10 (5 code + 5 judge) | 10 written, 0 failed, 0 skipped | 10 accepted |
+| generations | 3 | 3 | 3 |
+| bill | — | **$0.0117** (12 requests, 67,905 in / 15,144 out tokens) | $0; ≈$2.81 API-equivalent |
+| cards with >1 acceptance run | ≤ 2 | **0** (attempts=1 everywhere) | 0 |
+| judge defects found in code | ≤ 1 | 0 | 0 |
+| tests at the end | ≥ 20 | **40** | 34 |
+| wall time | — | 3m25s | 7m38s |
+
+**Falsifiable claim — held** in both runs. Diffstat of the Morph run:
+1113 insertions, 0 deletions — fully additive, no prose-guard trigger.
+
+Caveat for the record: the glm run went over a deck whose criteria had
+already survived one full execution (Scenario C), so its zero-regeneration
+result partly credits the debugged deck, not only the executor. A fresh-deck
+Morph run is the symmetric experiment.
