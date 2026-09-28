@@ -222,4 +222,40 @@ final test count, mutant kill table, `git log --oneline` of the run branch.
 
 ## 11. Actual
 
-_filled in after the run_
+Run `20260928-131231-529b11aa`, processor `glm` (z-ai/glm-5.3-flash, sync),
+2026-09-28 13:12:31 → 13:13:09, branch `morph/20260928-131231-529b11aa`.
+Archive: `.morph/runs/20260928-131231-529b11aa/`.
+
+| quantity | prediction | actual |
+|---|---|---|
+| cards | 3 | 3 written, 0 failed, 0 skipped |
+| generations | 1 | 1 |
+| provider bill | < $0.02 | **$0.00286** (3 requests, 17,631 in / 2,244 out tokens) |
+| cards with regeneration | ≤ 1 | **0** — every card at attempt 1 |
+| mutants surviving | 0 of 5 | **0 of 5** |
+| tests at the end | 60 | **60** |
+| wall time | — | 38 s |
+
+Mutant kill table, full suite (60) on each mutant:
+
+| mutant | result |
+|---|---|
+| storage: `INSERT OR IGNORE`, upsert clause removed | 1 failed, 59 passed |
+| storage: `ON CONFLICT(login) DO NOTHING` | 1 failed, 59 passed |
+| github_client: `status > 400` | 1 failed, 59 passed |
+| collectors: semaphore removed | 2 failed, 58 passed |
+| collectors: `Semaphore(concurrency + 1)` | 2 failed, 58 passed |
+
+Per card: upsert +79/−0, status400 +42/−0, concurrency +100/−0; no file
+under `megatron/`, no fixture and no existing test touched.
+
+**Falsifiable claim — held:** 3/3 written at attempt 1, 0 of 5 mutants
+survive, the 3 in-scope v2 escapes are now red in the full suite.
+
+**Defect in §8, found by the run:** with `--root ../../Megatron` (relative)
+mrph wrote and accepted every card but committed none ("path is outside the
+repository"); the three test files and the run archive were committed by the
+orchestrator by hand on the run branch, one commit per card with the Morph
+trailers. Next run: pass `--root` as an absolute path.
+
+Not accepted by anything here: retry/backoff (§7, no refusal artifact).
