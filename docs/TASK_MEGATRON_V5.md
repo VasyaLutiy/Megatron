@@ -267,4 +267,47 @@ numstat, final test count, mutant kill table.
 
 ## 11. Actual
 
-_To be filled after the run._
+Two runs, processor `glm` (z-ai/glm-5.3-flash, sync), `--root` absolute.
+
+- `20260928-143742-4e753d5e` (deck `v5.json`, 7 cards, 2 generations, ~1 min):
+  6 written, **score-judge-v5 failed** (3 attempts, all rejected by the
+  syntax gate: line 128 of 126, then line 1 twice). cli-v5 and storage-v5
+  passed on attempt 2 after the same kind of rejection (line 145 of 143, 151 of
+  149). $0.01384, 11 requests.
+- `20260928-145156-59f4a062` (deck `v5-rerun.json`: score-judge-v5 alone,
+  `variants: 2`, plus the line "exactly ONE fenced python block ... no second
+  fenced block, no prose"): v1 cut off (unclosed fence), **v2 written**.
+  $0.00211, 2 requests.
+
+| quantity | prediction | actual |
+|---|---|---|
+| cards | 7 | 7 written (6 + 1 on the rerun) |
+| generations | 2 | 2 + 1 (rerun) |
+| provider bill | < $0.05 | **$0.01595** (13 requests) |
+| cards with regeneration | 1–3 | **3** (cli, storage: 1 each; score-judge: 2 + a rerun) |
+| mutants surviving | 0 of 7 | **0 of 7** |
+| lines removed, whole deck | ≤ 40 | **39** (all from the §2.5 lists; `processors.py` −2, the import was added, not replaced) |
+| `"""` counts | unchanged | unchanged in all 8 files |
+| tests at the end | 80 | **80 passed**; `git grep` of the old values in `megatron tests contour.yaml`: empty |
+
+**Falsifiable claim — held, with one rerun:** 7/7 written, every removed line
+is in §2.5, 80 passed, no old value left.
+
+Findings:
+
+1. **All 6 rejections were syntax-gate rejections, and the forensic snapshot
+   caught none of them.** The gate runs before acceptance, restores the file
+   and drops the answer, and sync results live only in memory, so
+   `/tmp/morph/score-judge-v5/` was never created. The cause cannot be
+   recovered. The hypothesis is a second fenced block glued in by
+   `response_to_file_body`, which joins every block (errors at the last line + 2
+   and at line 1). It is consistent with, but not proven by, the rerun: with the
+   one-block line, v1 came back with an unclosed fence and v2 was clean.
+2. **`variants: 2` on a single-target card leaves a copy in the tree:**
+   `tests/test_score_examples.score-judge-v5.v2.py` (identical to the winner)
+   was committed with the card and breaks pytest collection (module name with
+   dots). The rerun's acceptance ignored it by `--ignore-glob`; the copy was
+   removed by hand in `c9af809`.
+3. The deletion guard (removed lines ⊆ named line numbers) never fired on a
+   written answer: every answer that got past the syntax gate was a clean
+   in-place edit.
