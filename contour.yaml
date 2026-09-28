@@ -176,8 +176,10 @@ System:
           description: >
             harvest(logins, fetch_json, db_path, concurrency=10) runs
             collect_profiles -> score_expertise -> save_experts and returns
-            {"requested", "saved", "failed"}; main(argv=None, fetch_json=None)
-            is the CLI, building GitHubClient() when no fetcher is given.
+            {"requested", "saved", "failed"} (+ "skipped" with skip_existing=True,
+            v6); main(argv=None, fetch_json=None) is the CLI, building
+            GitHubClient() when no fetcher is given. Exit codes: 0 success,
+            1 harvest with a failed login, 3 partial discover (v6).
           requirements: [Stdlib Only, Offline Tests]
           steps:
             - calls: Collect Profiles
@@ -193,6 +195,14 @@ System:
             - given: urllib_transport patched to serve search_page1/2 with their headers (v4)
               when: main(["discover", "followers:>5000", "--pages", "2"])
               then: exit 0, stdout = the 60 logins of pages 1 and 2 in API order, one per line
+            - given: the synthetic search walk raising GitHubError 403 on page 6 (v6)
+              when: main(["discover", "followers:>5000", "--pages", "8"])
+              then: >
+                exit 3, stdout = the 150 logins of pages 1-5, stderr
+                "warning: partial result, page 6 failed: HTTP 403", no traceback
+            - given: a db already holding torvalds (v6)
+              when: main(["harvest", "torvalds", "minnow", "--db", db, "--skip-existing"], fetch_json=fake)
+              then: exit 0, stdout "fetched 1, skipped 1, failed 0", no torvalds request
     - name: search
       description: GitHub user search -> logins, paged along Link rel="next" (v4).
       functions:
@@ -221,6 +231,11 @@ System:
             - given: page 1 headers with x-ratelimit-remaining "0", clock 1790599575
               when: discover_logins(client, "followers:>5000", 2)
               then: exactly one sleep of 60 seconds before the page-2 request
+            - given: a synthetic walk of 30-login pages whose transport raises GitHubError 403 on call 6 (v6)
+              when: discover_logins(client, "followers:>5000", 8)
+              then: >
+                the 150 logins of pages 1-5, pages 5, failed_page 6,
+                failed_status 403; no 7th request; transport restored
     - name: processors
       description: Expertise scoring over parsed profile data.
       functions:
@@ -257,7 +272,8 @@ System:
           description: >
             save_experts(db_path, records) upserts Expert Records into the
             experts table keyed by login; top_experts(db_path, n=10) returns
-            the n records with the highest expertise_score.
+            the n records with the highest expertise_score;
+            existing_logins(db_path) returns the set of stored logins (v6).
           behavior: >
             save_experts creates the schema if absent (CREATE TABLE IF NOT
             EXISTS experts, login TEXT PRIMARY KEY), upserts by login
@@ -287,6 +303,9 @@ System:
               then: >
                 exactly 1 row, and top_experts returns the second record whole;
                 red on INSERT OR IGNORE and on ON CONFLICT DO NOTHING (v3)
+            - given: a fresh temp path, then the same db after saving torvalds and minnow (v6)
+              when: existing_logins(db_path) is called
+              then: set() first, then {"torvalds", "minnow"}
       dataObjects:
         - name: Experts Database
           description: A SQLite file with one table, experts, keyed by login.
