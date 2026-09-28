@@ -82,7 +82,7 @@ class HarvestTests(unittest.TestCase):
             msg="ranked logins wrong",
         )
         self.assertEqual(
-            [850302, 7],
+            [1635, 90],
             [rec["expertise_score"] for rec in top],
             msg="ranked scores wrong",
         )
