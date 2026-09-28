@@ -1,0 +1,90 @@
+{
+  "deck_id": "20260928-145156-59f4a062",
+  "completed_at": "2026-09-28T14:52:22.600",
+  "branch": "morph/20260928-145156-59f4a062",
+  "backend_label": "glm",
+  "generations": [
+    [
+      "score-judge-v5"
+    ]
+  ],
+  "batch_ids": [
+    "local-028a65dc096444f6b0c69cf32b85ffe8"
+  ],
+  "outcomes": {
+    "score-judge-v5": {
+      "custom_id": "score-judge-v5",
+      "status": "written",
+      "paths": [
+        "/home/john/Documents/Work2026/Megatron/tests/test_score_examples.py",
+        "/home/john/Documents/Work2026/Megatron/tests/test_score_examples.score-judge-v5.v2.py"
+      ],
+      "reason": null,
+      "finish_reason": "stop",
+      "attempts": 1,
+      "winning_variant": "score-judge-v5.v2",
+      "acceptance_output": null,
+      "earlier_failures": null,
+      "commit": "1e3c5bde4423c3e4bf7b5f74def67b6753ec90e1",
+      "diffstat": [
+        {
+          "path": "tests/test_score_examples.py",
+          "insertions": 7,
+          "deletions": 7
+        },
+        {
+          "path": "tests/test_score_examples.score-judge-v5.v2.py",
+          "insertions": 126,
+          "deletions": 0
+        }
+      ],
+      "syntax_gate": {
+        "passed": true,
+        "checks": [
+          {
+            "path": "tests/test_score_examples.py",
+            "level": "parse",
+            "status": "passed",
+            "line": null,
+            "message": null
+          },
+          {
+            "path": "tests/test_score_examples.py",
+            "level": "import",
+            "status": "skipped",
+            "line": null,
+            "message": "off: MRPH_IMPORT_CHECK_PYTHON is not set"
+          }
+        ]
+      }
+    }
+  },
+  "usage": {
+    "score-judge-v5.v2": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790603516-eAJRHTVoO8VhL6u5DLeC",
+      "input_tokens": 6292,
+      "output_tokens": 1338,
+      "cost": 0.000731136,
+      "finish_reason": "stop"
+    },
+    "score-judge-v5.v1": {
+      "model": "z-ai/glm-5.3-flash",
+      "provider": "StreamLake",
+      "generation_id": "gen-1790603516-PzL36plndMAq4S5zzyd7",
+      "input_tokens": 6292,
+      "output_tokens": 1351,
+      "cost": 0.001376405,
+      "finish_reason": "stop"
+    }
+  },
+  "usage_totals": {
+    "input_tokens": 12584,
+    "output_tokens": 2689,
+    "cost": 0.002107541,
+    "requests": 2,
+    "requests_with_usage": 2
+  },
+  "orchestrator_usage": {}
+}
