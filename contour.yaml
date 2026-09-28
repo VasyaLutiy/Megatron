@@ -131,6 +131,14 @@ System:
                 followers are [0, 1, 2, 3, 4] in both runs; the test is red on
                 a collectors.py that returns results in completion order or
                 reversed
+            - given: >
+                the 5 search logins and a fake async fetch_json serving copies
+                of user_torvalds.json / repos_torvalds.json that counts calls in
+                flight (increment, record the peak, asyncio.sleep(0.01), decrement)
+              when: collect_profiles(logins, fetch_json, concurrency=2) and concurrency=1 are awaited
+              then: >
+                the peak equals 2 and 1 respectively, 5 non-None results each;
+                the test is red on a collectors.py without the semaphore (v3)
     - name: github_client
       description: The only module that talks to the network (v2).
       functions:
@@ -158,6 +166,9 @@ System:
             - given: rate_limit_headers.txt with x-ratelimit-remaining "0", clock 1790594766
               when: fetch_json is awaited twice
               then: the second call sleeps exactly 120 seconds before its request
+            - given: a fake transport answering /users/torvalds with status 400
+              when: fetch_json("/users/torvalds") is awaited
+              then: GitHubError with .status 400 after one request (the boundary, v3)
     - name: cli
       description: python -m megatron harvest <login>... (v2).
       functions:
@@ -237,6 +248,14 @@ System:
               then: >
                 the result is one record, login "torvalds", expertise_score
                 850302, languages equal to {"C": 8, "OpenSCAD": 1}
+            - given: >
+                the torvalds record built from the fixtures (followers 325466,
+                total_stars 262418, expertise_score 850302), then the live row
+                of the 2026-09-28 smoke (325474, 262428, 850330) for the same login
+              when: both are saved in turn into a fresh temp db
+              then: >
+                exactly 1 row, and top_experts returns the second record whole;
+                red on INSERT OR IGNORE and on ON CONFLICT DO NOTHING (v3)
       dataObjects:
         - name: Experts Database
           description: A SQLite file with one table, experts, keyed by login.
